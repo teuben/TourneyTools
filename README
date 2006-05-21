@@ -1,5 +1,41 @@
 
-Information on V1 of PTT (Peter's TourneyTools) is on:  
+Information on the older V1 of PTT (Peter's TourneyTools) is on:  
 	http://www.astro.umd.edu/~teuben/badminton/tourney/
+
+The old version is a mix of shell, awk, grep etc.
+
+Requirement for the new one are:
+
+	python
+	ipython (strongly suggested)
+
+In the examples below, i will assume you have ipython:
+
+
+
+
+% ipython                               <-- type on command line
+> import ptt                            <-- the tourney code
+s=ptt.Registration('seniors2002',2)     <-- read in the 2002 seniors
+s.reload()                              <-- reload data, imagine you've edited players
+reload(ptt)                             <-- reload code, imagine you've edited code
+s.list('ms-1')
+ 1: Alan Mills (CO)
+ 2: Armando Del Carpio (FL)
+ 3: Kirill Boyarin (MA)
+...
+
+ s.list('md-1')
+ 1: Alan Mills (CO) Simon Thermadam
+  : Alan Mills      Simon Thermadam (NY)		<-- check partner name
+ 2: Armando Del Carpio (FL) Andy Chong
+  : Armando Del Carpio      Andy Chong (MA)
+ 3: Kirill Boyarin (MA) Ravi Raveendran
+  : Kirill Boyarin      Ravi Raveendran (MA)
+ 4: Zhiping You (MA) Robert Lee
+  : Zhiping You      Robert Lee (MA)
+  : Simon Thermadam (NY) Alan Mills                     <-- double check partner's partner
+  : Simon Thermadam      Alan Mills (CO)
+
 
 
