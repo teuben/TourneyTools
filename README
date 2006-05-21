@@ -9,7 +9,9 @@ Requirement for the new one are:
 	python
 	ipython (strongly suggested)
 
-In the examples below, i will assume you have ipython:
+In the examples below, i will assume you have ipython, since this
+makes sessions managment, history recall, reloading code and data
+a lOT easier.
 
 
 

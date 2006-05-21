@@ -4,8 +4,15 @@ import os
 
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
-    set of keyword=value pairs for each player. Any of the parse member
-    functions will stuff this into a players list
+    set of keyword=value pairs for each player. It is normally the output
+    of the web form where the players registered. 
+
+    You will however need to know which style this folder is in.
+
+    We now have three:
+    d = Registration('dcopen06',1)        old dcopen style
+    s = Registration('seniors2002,2)      seniors style
+    n = Registration('njopen',3)          eric miller's style
     """
     def __init__(self,filename,method):
         self.method = method
@@ -24,6 +31,13 @@ class Registration(object):
         else:
             print "Unimplemented method %d" % self.method
 
+    def reset(self):
+        self.sum = {}
+        for c in self.cat:
+            self.sum[c] = {}
+            for e in ['ms', 'ws', 'md', 'wd', 'xd']:
+                self.sum[c][e] = 0
+                
     def parse3(self,file):
         """parser for njopen"""
         def insert(player,words,keyform,key):
@@ -32,6 +46,7 @@ class Registration(object):
         self.filename = file
         self.cat = ['A', 'C', 'S', 'J']
         self.players = []
+        self.reset()
         f = open(file,'r')
         a = f.readlines()
         f.close()
@@ -113,6 +128,7 @@ class Registration(object):
         self.filename = file
         self.cat = ['1','2','3','4','5','6','7','8','9','10']
         self.players = []
+        self.reset()
         f = open(file,'r')
         a = f.readlines()
         f.close()
@@ -162,6 +178,7 @@ class Registration(object):
         self.filename = file
         self.cat = ['A','C','S','M']
         self.players = []
+        self.reset()
         f = open(file,'r')
         a = f.readlines()
         f.close()
@@ -219,6 +236,18 @@ class Registration(object):
         else:
             print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
 
+    def showcat(self):
+        for c in self.cat:
+            print "ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c)
+
+
+    def map(self):
+        print "      MS   WS   MD   WD   XD "
+        for c in self.cat:
+            for e in ['ms' 'ws' 'md' 'wd' 'xd']:
+                print "%-3s:  %2d   %2d   %2d   %2d   %2d" % (c,self.sum[c]['ms'],self.sum[c]['ws'],self.sum[c]['md'],self.sum[c]['wd'],self.sum[c]['xd'])
+                
+
     def list(self,key):
         if key[1] == 'd':
             self.doubles(key)
@@ -234,6 +263,9 @@ class Registration(object):
             if player.has_key(key):
                 n = n+1
                 print "%2d: %s %s (%s)" % (n,player['fname'],player['lname'],player['state'])
+        e=key[0:2]
+        c=key[3:4]
+        self.sum[c][e] = n
 
     def doubles(self,key1,key2=None):
         """created a list of a doubles entries
@@ -268,6 +300,9 @@ class Registration(object):
                     partner = '???'
                     if p1.has_key(key2): partner = p1[key2]
                     print "  : %s      %s %s (%s)" % (partner,p1['fname'],p1['lname'],p1['state'])
+        e=key1[0:2]
+        c=key1[3:4]
+        self.sum[c][e] = n
 
     def player2(self,fname,lname):
         for player in self.players:
