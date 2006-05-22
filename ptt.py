@@ -62,7 +62,7 @@ class Registration(object):
                     cnt1 = cnt1 + 1
                     inside = True
                     player={}
-                if words[0] == 'Z-Release':
+                if words[0] == 'z-Thanks':
                     cnt2 = cnt2 + 1
                     inside = False
                     self.players.append(player)
@@ -240,21 +240,41 @@ class Registration(object):
         for c in self.cat:
             print "ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c)
 
-
     def map(self):
-        print "      MS   WS   MD   WD   XD "
+        print "Tournament: %s" % self.filename
+        print "      ms   ws   md   wd   xd "
+        # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
+        sum = [0,0,0,0,0]
+        n = [0,0,0,0,0]
         for c in self.cat:
-            for e in ['ms' 'ws' 'md' 'wd' 'xd']:
-                print "%-3s:  %2d   %2d   %2d   %2d   %2d" % (c,self.sum[c]['ms'],self.sum[c]['ws'],self.sum[c]['md'],self.sum[c]['wd'],self.sum[c]['xd'])
-                
+            n[0] = self.sum[c]['ms']
+            n[1] = self.sum[c]['ws']
+            n[2] = self.sum[c]['md']
+            n[3] = self.sum[c]['wd']
+            n[4] = self.sum[c]['xd']
+            nsum = n[0] + n[1] + n[2] + n[3] + n[4]
+            for i in range(5):
+                sum[i] = sum[i] + n[i]
+            print "%-3s:  %2d   %2d   %2d   %2d   %2d   |  %3d" % (c,n[0],n[1],n[2],n[3],n[4], nsum)
+        sumall = sum[0]+sum[1]+sum[2]+sum[3]+sum[4]
+        print "     ---  ---  ---  ---  ---   | ---" 
+        print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
 
-    def list(self,key):
+
+    def listall(self,debug=False):
+        for cat in self.cat:
+            for event in ['ms','ws','md','wd','xd']:
+                key = event+'-'+cat
+                print "Event: %s" % key
+                self.list(key,debug)
+
+    def list(self,key,debug=False):
         if key[1] == 'd':
-            self.doubles(key)
+            self.doubles(key,debug)
         else:
-            self.singles(key)
+            self.singles(key,debug)
 
-    def singles(self,key):
+    def singles(self,key,debug=True):
         """created a list of a singles entries:
         singles(players,key), e.g.  singles(p,'ms-A')
         """
@@ -267,21 +287,22 @@ class Registration(object):
         c=key[3:4]
         self.sum[c][e] = n
 
-    def doubles(self,key1,key2=None):
+    def doubles(self,key,debug=True):
         """created a list of a doubles entries
-        doubles(players,key1,key2), e.g. doubles(p,'md-A','dp-A')
+        doubles(players,key1), e.g. doubles(p,'md-A')
         """
         n = 0
-        if key2 == None:
-            if key1[2] == '-':
-                if key1[0] == 'x':
-                    key2 = 'xp-' + key1[3]
-                else:
-                    key2 = 'dp-' + key1[3]
+        if key[0] == 'x':
+            mixed = True
+            key2 = 'xp-' + key[3:]
+        else:
+            mixed = False
+            key2 = 'dp-' + key[3:]
         for player in self.players:
             player[0] = 0
         for player in self.players:
-            if player.has_key(key1):
+            if player.has_key(key):
+                sex = player['sex'][0]
                 if player[0] == 0:
                     n = n+1
                     show = 1
@@ -290,18 +311,34 @@ class Registration(object):
                 player[0] = 1                
                 partner = '???'
                 if player.has_key(key2): partner = player[key2]
-                if show:
-                    print "%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner)
-                else:
-                    print  "  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner)
+                if debug:
+                    if show:
+                        print "%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner)
+                    else:
+                        print  "  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner)
                 p1 = self.player1(partner)
                 if len(p1):
                     p1[0] = 1
-                    partner = '???'
-                    if p1.has_key(key2): partner = p1[key2]
-                    print "  : %s      %s %s (%s)" % (partner,p1['fname'],p1['lname'],p1['state'])
-        e=key1[0:2]
-        c=key1[3:4]
+                    partner2 = '???'
+                    if p1.has_key(key2): partner2 = p1[key2]
+                    if debug: print "  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state'])
+                    if show:
+                        s1 = player['state']
+                        s2 = p1['state']
+                        if s1 == s2:
+                            state = s1
+                        else:
+                            state = s1+'/'+s2
+                        if mixed and sex=='m':
+                            print "%2d: %s %s / %s (%s)" % (n,player['fname'],player['lname'],partner,state)
+                        else:
+                            print "%2d: %s / %s %s (%s)" % (n,partner,player['fname'],player['lname'],state)
+                else:
+                    print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
+                    
+                
+        e=key[0:2]
+        c=key[3:]
         self.sum[c][e] = n
 
     def player2(self,fname,lname):
@@ -321,15 +358,3 @@ class Registration(object):
                     return player
         return {}
 
-    def listall(self):
-        for cat in self.cat:
-            for event in ['ms','ws','md','wd','xd']:
-                key = event+'-'+cat
-                print "Event: %s" % key
-                self.list(key)
-
-# p = parse1('njopen')
-# p = parse2('seniors2002')
-# p = parse3('dcopen06')
-
-# r = Registration('njopen')
