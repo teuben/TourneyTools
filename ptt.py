@@ -100,21 +100,21 @@ class Registration(object):
                     insert(player,words,'Partner_C-D',     'dp-C')
                     insert(player,words,'Partner_MXD_C-D', 'xp-C')
 
-                    insert(player,words,'MS_SENIOR',         'ms-S')
-                    insert(player,words,'WS_SENIOR',         'ms-S')
-                    insert(player,words,'MD_SENIOR',         'md-S')
-                    insert(player,words,'WD_SENIOR',         'wd-S')
-                    insert(player,words,'MXD_SENIOR',        'xd-S')
-                    insert(player,words,'Partner_SENIOR',    'dp-S')
-                    insert(player,words,'Partner_MXD_SENIOR','xp-S')
+                    insert(player,words,'MS_SENIOR',          'ms-S')
+                    insert(player,words,'WS_SENIOR',          'ms-S')
+                    insert(player,words,'MD_SENIOR',          'md-S')
+                    insert(player,words,'WD_SENIOR',          'wd-S')
+                    insert(player,words,'MXD_SENIOR',         'xd-S')
+                    insert(player,words,'Partner_SENIOR',     'dp-S')
+                    insert(player,words,'Partner_MXD_SENIOR', 'xp-S')
 
-                    insert(player,words,'BS_JUNIOR',         'ms-J')
-                    insert(player,words,'WS_JUNIOR',         'ms-J')
-                    insert(player,words,'GD_JUNIOR',         'md-J')
-                    insert(player,words,'GD_JUNIOR',         'wd-J')
-                    insert(player,words,'MXD_JUNIOR',        'xd-J')
-                    insert(player,words,'Partner_JUNIOR',    'dp-J')
-                    insert(player,words,'Partner_MXD_JUNIOR','xp-J')
+                    insert(player,words,'BS_JUNIORS',         'ms-J')
+                    insert(player,words,'WS_JUNIORS',         'ms-J')
+                    insert(player,words,'GD_JUNIORS',         'md-J')
+                    insert(player,words,'GD_JUNIORS',         'wd-J')
+                    insert(player,words,'MXD_JUNIORS',        'xd-J')
+                    insert(player,words,'Partner_JUNIORS',    'dp-J')
+                    insert(player,words,'Partner_MXD_JUNIORS','xp-J')
         if cnt1==cnt2:
             print "Found %d players in %s" % (cnt1,file)
         else:
@@ -261,6 +261,20 @@ class Registration(object):
         print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
 
 
+    def list1(self):
+        n = 0
+        for player in self.players:
+            n = n + 1
+            name = "%s %s (%s)" % (player['fname'],player['lname'],player['state'])
+            events = ""
+            for cat in self.cat:
+                for event in ['ms','ws','md','wd','xd']:
+                    key = event+'-'+cat
+                    if player.has_key(key):
+                        events = events + " " + key
+            print "%3d: %-30s: %s" % (n,name,events)
+        
+            
     def listall(self,debug=False):
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
