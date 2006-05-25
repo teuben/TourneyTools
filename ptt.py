@@ -89,7 +89,8 @@ class Registration(object):
                     insert(player,words,'WS_A-B',          'ws-A')
                     insert(player,words,'WD_A-B',          'wd-A')
                     insert(player,words,'MXD_A-B',         'xd-A')
-                    insert(player,words,'Partner_A-B',     'dp-A')
+                    insert(player,words,'Partner_MD_A-B',  'dp-A')
+                    insert(player,words,'Partner_WD_A-B',  'dp-A')
                     insert(player,words,'Partner-MXD_A-B', 'xp-A')
 
                     insert(player,words,'MS_C-D',          'ms-C')
@@ -97,7 +98,8 @@ class Registration(object):
                     insert(player,words,'MD_C-D',          'md-C')
                     insert(player,words,'WD_C-D',          'wd-C')
                     insert(player,words,'MXD_C-D',         'xd-C')                
-                    insert(player,words,'Partner_C-D',     'dp-C')
+                    insert(player,words,'Partner_MD_C-D',  'dp-C')
+                    insert(player,words,'Partner_WD_C-D',  'dp-C')
                     insert(player,words,'Partner_MXD_C-D', 'xp-C')
 
                     insert(player,words,'MS_SENIOR',          'ms-S')
