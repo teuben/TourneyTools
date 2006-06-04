@@ -29,6 +29,7 @@ class Registration(object):
         self.method = method
         self.filename = filename
         self.reload()
+        os.system('date')
     def reload(self):
         if self.method==1:
             """old dcopen"""
