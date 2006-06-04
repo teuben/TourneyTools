@@ -1,4 +1,15 @@
 #
+#  Peter's Tourney Toolkit - a set of python modules
+#  to process badminton registration forms and prepare
+#  event lists for ranking
+#
+#  History:
+#  This work is based on the earlier awk/grep/sed/csh scripts
+#  that have been used pre-2006.
+#  First tested on Seniors 2006 and NJ Open 2006, both June 2006.
+#
+#  $Id$
+#
 
 import os
 
