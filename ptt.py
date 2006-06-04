@@ -49,7 +49,9 @@ class Registration(object):
             self.sum[c] = {}
             for e in ['ms', 'ws', 'md', 'wd', 'xd']:
                 self.sum[c][e] = 0
-                
+
+    # --------------------------------------------------------------------------------
+    
     def parse3(self,file):
         """parser for njopen"""
         def insert(player,words,keyform,key):
@@ -185,6 +187,8 @@ class Registration(object):
             print "Found %d players in %s" % (cnt1,file)
         else:
             print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+            
+    # --------------------------------------------------------------------------------            
 
     def parse1(self,file):
         """parser for dcopen06, and probably any dcopen up until 2006"""
@@ -255,6 +259,8 @@ class Registration(object):
         else:
             print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
 
+    # --------------------------------------------------------------------------------
+
     def showcat(self):
         for c in self.cat:
             print "ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c)
@@ -289,16 +295,20 @@ class Registration(object):
 
     def sort1(self):
         def cmpfunc(a,b):
-            if a==b: return 0
-            if a<b:  return -1
-            if a>b:  return 1
+            name_a = a['lname'] + ' ' + a['fname'] 
+            name_b = b['lname'] + ' ' + b['fname'] 
+            if name_a == name_b: return 0
+            if name_a <  name_b: return -1
+            if name_a >  name_b: return 1
             return 0
+        self.players.sort(cmpfunc)
             
     def list1(self):
+        """list of all players and their events"""
         n = 0
         for player in self.players:
             n = n + 1
-            name = "%s %s (%s)" % (player['fname'],player['lname'],player['state'])
+            name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
             events = ""
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
