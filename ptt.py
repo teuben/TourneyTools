@@ -89,15 +89,17 @@ class Registration(object):
                     insert(player,words,'WS_A-B',          'ws-A')
                     insert(player,words,'WD_A-B',          'wd-A')
                     insert(player,words,'MXD_A-B',         'xd-A')
+                    insert(player,words,'Partner_A-B',     'dp-A')
                     insert(player,words,'Partner_MD_A-B',  'dp-A')
                     insert(player,words,'Partner_WD_A-B',  'dp-A')
-                    insert(player,words,'Partner-MXD_A-B', 'xp-A')
+                    insert(player,words,'Partner_MXD_A-B', 'xp-A')
 
                     insert(player,words,'MS_C-D',          'ms-C')
                     insert(player,words,'WS_C-D',          'ws-C')
                     insert(player,words,'MD_C-D',          'md-C')
                     insert(player,words,'WD_C-D',          'wd-C')
-                    insert(player,words,'MXD_C-D',         'xd-C')                
+                    insert(player,words,'MXD_C-D',         'xd-C')
+                    insert(player,words,'Partner_C-D',     'dp-C')
                     insert(player,words,'Partner_MD_C-D',  'dp-C')
                     insert(player,words,'Partner_WD_C-D',  'dp-C')
                     insert(player,words,'Partner_MXD_C-D', 'xp-C')
@@ -111,8 +113,8 @@ class Registration(object):
                     insert(player,words,'Partner_MXD_SENIOR', 'xp-S')
 
                     insert(player,words,'BS_JUNIORS',         'ms-J')
-                    insert(player,words,'WS_JUNIORS',         'ms-J')
-                    insert(player,words,'GD_JUNIORS',         'md-J')
+                    insert(player,words,'GS_JUNIORS',         'ms-J')
+                    insert(player,words,'BD_JUNIORS',         'md-J')
                     insert(player,words,'GD_JUNIORS',         'wd-J')
                     insert(player,words,'MXD_JUNIORS',        'xd-J')
                     insert(player,words,'Partner_JUNIORS',    'dp-J')
@@ -243,7 +245,8 @@ class Registration(object):
             print "ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c)
 
     def map(self):
-        print "Tournament: %s" % self.filename
+        print ""
+        print "Summary of tournament: %s" % self.filename
         print "      ms   ws   md   wd   xd "
         # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
         sum = [0,0,0,0,0]
@@ -262,6 +265,13 @@ class Registration(object):
         print "     ---  ---  ---  ---  ---   | ---" 
         print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
 
+    def conflicts(self):
+        """identify various conflicts:
+        - men in doubles events with women partners
+        - players in doubles with no partner
+        """
+        print "Searching for conflicts:"
+
 
     def list1(self):
         n = 0
@@ -278,11 +288,22 @@ class Registration(object):
         
             
     def listall(self,debug=False):
+        self.missing=[]
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
                 key = event+'-'+cat
                 print "Event: %s" % key
                 self.list(key,debug)
+        print "=== Missing entries from: "
+        self.missing.sort()
+        old = ""
+        count = 0
+        for i in self.missing:
+            if i != old:
+                count = count + 1
+                print "%3d: %s" % (count,i)
+            old = i
+            
 
     def list(self,key,debug=False):
         if key[1] == 'd':
@@ -351,6 +372,8 @@ class Registration(object):
                             print "%2d: %s / %s %s (%s)" % (n,partner,player['fname'],player['lname'],state)
                 else:
                     print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
+                    if partner != "???" and partner != "need":
+                        self.missing.append(partner)
                     
                 
         e=key[0:2]
