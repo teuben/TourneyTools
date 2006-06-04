@@ -65,6 +65,9 @@ class Registration(object):
                 if words[0] == 'z-Thanks':
                     cnt2 = cnt2 + 1
                     inside = False
+                    q = self.player2(player['fname'],player['lname'])
+                    if len(q) > 0:
+                        print "###: Warning : player %s %s already registered" % (player['fname'],player['lname'])
                     self.players.append(player)
                 if inside:
                     insert(player,words,'A-firstname',     'fname')
@@ -272,7 +275,13 @@ class Registration(object):
         """
         print "Searching for conflicts:"
 
-
+    def sort1(self):
+        def cmpfunc(a,b):
+            if a==b: return 0
+            if a<b:  return -1
+            if a>b:  return 1
+            return 0
+            
     def list1(self):
         n = 0
         for player in self.players:
@@ -327,6 +336,7 @@ class Registration(object):
     def doubles(self,key,debug=True):
         """created a list of a doubles entries
         doubles(players,key1), e.g. doubles(p,'md-A')
+        key:     md, wd, xd
         """
         n = 0
         if key[0] == 'x':
@@ -335,8 +345,10 @@ class Registration(object):
         else:
             mixed = False
             key2 = 'dp-' + key[3:]
+        # set this tag to 0 if we've not seen this person
         for player in self.players:
             player[0] = 0
+        # loop over all players, and see if they play in "key"
         for player in self.players:
             if player.has_key(key):
                 sex = player['sex'][0]
@@ -395,5 +407,18 @@ class Registration(object):
             for player in self.players:
                 if player['fname']==names[0] and player['lname']==names[1]:
                     return player
+        if len(names) == 3:
+            fname = names[0] + ' ' + names[1]
+            lname = names[2]
+            for player in self.players:
+                if player['fname']==fname and player['lname']==lname:
+                    return player
+            fname = names[0]
+            lname = names[1] + ' ' + names[2]
+            for player in self.players:
+                if player['fname']==fname and player['lname']==lname:
+                    return player
+        if len(names) == 4:
+            print "### Name with 4 words???: " % names
         return {}
 
