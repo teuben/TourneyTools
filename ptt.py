@@ -130,7 +130,7 @@ class Registration(object):
                     insert(player,words,'Partner_MXD_SENIOR', 'xp-S')
 
                     insert(player,words,'BS_JUNIORS',         'ms-J')
-                    insert(player,words,'GS_JUNIORS',         'ms-J')
+                    insert(player,words,'GS_JUNIORS',         'ws-J')
                     insert(player,words,'BD_JUNIORS',         'md-J')
                     insert(player,words,'GD_JUNIORS',         'wd-J')
                     insert(player,words,'MXD_JUNIORS',        'xd-J')
@@ -342,15 +342,25 @@ class Registration(object):
         else:
             self.singles(key,debug)
 
+    def bad_sex(self,sex,need_sex):
+        if sex=='m' and need_sex=='m': return False
+        if sex=='f' and need_sex=='w': return False
+        return True
+
     def singles(self,key,debug=True):
         """created a list of a singles entries:
         singles(players,key), e.g.  singles(p,'ms-A')
+        key:  ms-XXX
+              ws-XXX
         """
         n = 0
+        need_sex = key[0]
         for player in self.players:
             if player.has_key(key):
                 n = n+1
                 print "%2d: %s %s (%s)" % (n,player['fname'],player['lname'],player['state'])
+                sex = player['sex'][0]
+                if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex)
         e=key[0:2]
         c=key[3:4]
         self.sum[c][e] = n
