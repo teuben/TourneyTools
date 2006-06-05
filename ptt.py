@@ -11,6 +11,8 @@
 #  $Id$
 #
 
+ptt_version = "$Version: $
+
 import os
 
 class Registration(object):
@@ -319,11 +321,14 @@ class Registration(object):
         
             
     def listall(self,debug=False):
+        """loop over all events in the tournament and list them.
+        to do just one, use list(event)
+        """
         self.missing=[]
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
                 key = event+'-'+cat
-                print "Event: %s" % key
+                print "Event:: %s" % key
                 self.list(key,debug)
         print "=== Missing entries from: "
         self.missing.sort()
@@ -337,12 +342,19 @@ class Registration(object):
             
 
     def list(self,key,debug=False):
+        """list a single event
+        key:  ms-XXX, ws-XXX, md-XXX, wd-XXX, xd-XXX
+        """
         if key[1] == 'd':
             self.doubles(key,debug)
         else:
             self.singles(key,debug)
 
     def bad_sex(self,sex,need_sex):
+        """check genders
+        sex:       'm' or 'f'
+        need_sex   'm' or 'w'
+        """
         if sex=='m' and need_sex=='m': return False
         if sex=='f' and need_sex=='w': return False
         return True
@@ -368,9 +380,10 @@ class Registration(object):
     def doubles(self,key,debug=True):
         """created a list of a doubles entries
         doubles(players,key1), e.g. doubles(p,'md-A')
-        key:     md, wd, xd
+        key:     md-XXX, wd-XXX, xd-XXX
         """
         n = 0
+        need_sex = key[0]
         if key[0] == 'x':
             mixed = True
             key2 = 'xp-' + key[3:]
@@ -384,6 +397,7 @@ class Registration(object):
         for player in self.players:
             if player.has_key(key):
                 sex = player['sex'][0]
+                if not mixed and self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex)
                 if player[0] == 0:
                     n = n+1
                     show = 1
@@ -410,13 +424,15 @@ class Registration(object):
                             state = s1
                         else:
                             state = s1+'/'+s2
+                        # the next line should be the final and only line for printout in the final correct version
+                        # the others are all for debugging and otherwise "should never happen" if all is well in the db
                         if mixed and sex=='m':
-                            print "%2d: %s %s / %s (%s)" % (n,player['fname'],player['lname'],partner,state)
+                            print "%2d:: %s %s / %s (%s)" % (n,player['fname'],player['lname'],partner,state)
                         else:
-                            print "%2d: %s / %s %s (%s)" % (n,partner,player['fname'],player['lname'],state)
+                            print "%2d:: %s / %s %s (%s)" % (n,partner,player['fname'],player['lname'],state)
                 else:
                     print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
-                    if partner != "???" and partner != "need":
+                    if partner != "???" and partner != "need" and partner != "REQ":
                         self.missing.append(partner)
                     
                 
