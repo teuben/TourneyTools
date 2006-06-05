@@ -31,6 +31,8 @@ class Registration(object):
         self.method = method
         self.filename = filename
         self.reload()
+        print "Using PTT %s " % ptt_version
+        print ""
         os.system('date')
     def reload(self):
         if self.method==1:
@@ -308,6 +310,7 @@ class Registration(object):
     def list1(self):
         """list of all players and their events"""
         n = 0
+        print "Participants: "
         for player in self.players:
             n = n + 1
             name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
