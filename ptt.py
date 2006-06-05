@@ -11,7 +11,7 @@
 #  $Id$
 #
 
-ptt_version = "$Version: $
+ptt_version = "$Revision$
 
 import os
 
