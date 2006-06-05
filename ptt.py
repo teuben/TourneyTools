@@ -11,7 +11,7 @@
 #  $Id$
 #
 
-ptt_version = "$Revision$
+ptt_version = "$Revision$  $Date$"
 
 import os
 
