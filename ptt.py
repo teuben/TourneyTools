@@ -23,9 +23,9 @@ class Registration(object):
     You will however need to know which style this folder is in.
 
     We now have three:
-    d = Registration('dcopen06',1)        old dcopen style
-    s = Registration('seniors2002,2)      seniors style
-    n = Registration('njopen',3)          eric miller's style
+    d = Registration('dcopen06',1)        pjt's old dcopen style
+    s = Registration('seniors2002,2)      pjt's old seniors style
+    n = Registration('njopen',3)          eric miller's old style (at least for njopen)
     """
     def __init__(self,filename,method):
         self.method = method
@@ -342,6 +342,9 @@ class Registration(object):
                 count = count + 1
                 print "%3d: %s" % (count,i)
             old = i
+        print ""
+        np = len(self.players)
+        print "Expecting a total of %d + %d = %d players" % (np,count,np+count)
             
 
     def list(self,key,debug=False):
