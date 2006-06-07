@@ -430,6 +430,24 @@ class Registration(object):
                 if p.has_key(key1) and p.has_key(key2):
                     print "###: Player %s %s overlapping %s and %s" % (p['fname'],p['lname'],key1,key2)
 
+    def need(self):
+        print "Checking for need partners:" 
+        for p in self.players:
+            for l in self.cat:
+                for c in  ['md', 'wd', 'xd']:
+                    key = c + '-' + l
+                    if p.has_key(key):
+                        partner = '???'
+                        if c == 'xd':
+                            key1 = 'xp-' + l
+                        else:
+                            key1 = 'dp-' + l
+                        if p.has_key(key1):
+                            partner = p[key1]
+                        if partner == "need" or partner == "???":
+                            player = "%s %s" % (p['fname'],p['lname'])
+                            print "###: %s  =>  %-20s    w/ %s" % (key,player,partner)
+
     def sort1(self):
         def cmpfunc(a,b):
             name_a = a['lname'] + ' ' + a['fname'] 
