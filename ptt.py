@@ -444,7 +444,7 @@ class Registration(object):
                             key1 = 'dp-' + l
                         if p.has_key(key1):
                             partner = p[key1]
-                        if partner == "need" or partner == "???":
+                        if partner == "need" or partner == "???" or partner == "REQ" or partner == "request":
                             player = "%s %s" % (p['fname'],p['lname'])
                             print "###: %s  =>  %-20s    w/ %s" % (key,player,partner)
 
