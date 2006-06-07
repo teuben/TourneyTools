@@ -430,6 +430,18 @@ class Registration(object):
                 if p.has_key(key1) and p.has_key(key2):
                     print "###: Player %s %s overlapping %s and %s" % (p['fname'],p['lname'],key1,key2)
 
+    def states(self):
+        print "Participants per state: "
+        count={}
+        for p in self.players:
+            state = p['state']
+            if count.has_key(state):
+                count[state] = count[state] + 1
+            else:
+                count[state] = 1
+        for state in count.keys():
+            print "%s : %d" % (state,count[state])
+
     def need(self):
         print "Checking for need partners:" 
         for p in self.players:
