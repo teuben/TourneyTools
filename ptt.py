@@ -31,7 +31,7 @@ class Registration(object):
         self.method = method
         self.filename = filename
         self.reload()
-        print "Using PTT %s " % ptt_version
+        print "  [Using software PTT %s]" % ptt_version
         print ""
         os.system('date')
     def reload(self):
@@ -195,6 +195,8 @@ class Registration(object):
                     insert(player,words,'F-phone',         'phone')
                     insert(player,words,'H-E-Mail',        'email')
                     insert(player,words,'Z-comments',      'comments')
+
+                    # todo:  if somebody has a Partner, might need to tag it also as to play!!!
 
                     insert(player,words,'MS_A-B',          'ms-A')
                     insert(player,words,'MD_A-B',          'md-A')
@@ -362,7 +364,7 @@ class Registration(object):
 
     def map(self):
         print ""
-        print "Summary of tournament: %s" % self.filename
+        print "Summary of number of entries in tournament: %s" % self.filename
         print "      ms   ws   md   wd   xd "
         # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
         sum = [0,0,0,0,0]
@@ -381,12 +383,52 @@ class Registration(object):
         print "     ---  ---  ---  ---  ---   | ---" 
         print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
 
+    def match_count(self,p=2):
+        def mp(n,p):
+            if p==1:
+                return n-1
+            elif p==2:
+                return (3*n)/2-2
+            elif p==3:
+                return 0
+        print ""
+        print "Number of expected matches in tournament: %s" % self.filename
+        print "Assuming elimination level %d" % p
+        print "      ms   ws   md   wd   xd "
+        # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
+        sum = [0,0,0,0,0]
+        n = [0,0,0,0,0]
+        for c in self.cat:
+            n[0] = mp(self.sum[c]['ms'],p)
+            n[1] = mp(self.sum[c]['ws'],p)
+            n[2] = mp(self.sum[c]['md'],p)
+            n[3] = mp(self.sum[c]['wd'],p)
+            n[4] = mp(self.sum[c]['xd'],p)
+            nsum = n[0] + n[1] + n[2] + n[3] + n[4]
+            for i in range(5):
+                sum[i] = sum[i] + n[i]
+            print "%-3s:  %2d   %2d   %2d   %2d   %2d   |  %3d" % (c,n[0],n[1],n[2],n[3],n[4], nsum)
+        sumall = sum[0]+sum[1]+sum[2]+sum[3]+sum[4]
+        print "     ---  ---  ---  ---  ---   | ---" 
+        print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
+
     def conflicts(self):
         """identify various conflicts:
         - men in doubles events with women partners
         - players in doubles with no partner
         """
         print "Searching for conflicts:"
+
+    def overlap(self,cat):
+        if len(cat) != 2:
+            print "Cannot do overlap for %s" % cat
+        print "Checking overlap in %s :" % cat
+        for p in self.players:
+            for c in  ['ms', 'ws', 'md', 'wd', 'xd']:
+                key1 = c + '-' + cat[0]
+                key2 = c + '-' + cat[1]
+                if p.has_key(key1) and p.has_key(key2):
+                    print "###: Player %s %s overlapping %s and %s" % (p['fname'],p['lname'],key1,key2)
 
     def sort1(self):
         def cmpfunc(a,b):
