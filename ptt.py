@@ -56,6 +56,97 @@ class Registration(object):
 
     # --------------------------------------------------------------------------------
     
+    def parse4(self,file):
+        """parser for Eric's 2006 YMCA round robin doubles"""
+        def insert(player,words,keyform,key):
+            if words[0] == keyform:
+                player[key] = words[1].strip()
+        self.filename = file
+        self.cat = ['A', 'C', 'S', 'J']
+        self.players = []
+        self.reset()
+        f = open(file,'r')
+        a = f.readlines()
+        f.close()
+        cnt1 = 0
+        cnt2 = 0
+        inside = False
+        for l in a:
+            line = l.strip()
+            words = line.split(':')
+            if len(words) > 0:
+                if words[0] == '0-Subject':
+                    # New Jersey Open Registration Form Entry
+                    cnt1 = cnt1 + 1
+                    inside = True
+                    player={}
+                if words[0] == 'z-Thanks':
+                    cnt2 = cnt2 + 1
+                    inside = False
+                    q = self.player2(player['fname'],player['lname'])
+                    if len(q) > 0:
+                        print "###: Warning : player %s %s already registered" % (player['fname'],player['lname'])
+                    self.players.append(player)
+                if inside:
+                    insert(player,words,'A-firstname',     'fname')
+                    insert(player,words,'A-lastname',      'lname')
+                    insert(player,words,'A-nickname',      'nick')
+                    insert(player,words,'A-usab-no',       'usab')
+                    insert(player,words,'gender',          'sex')
+                    insert(player,words,'A-age',           'age')
+                    insert(player,words,'A-birthdate',     'bday')
+                    insert(player,words,'B-org',           'org')
+                    insert(player,words,'C-Street1',       'street')
+                    insert(player,words,'C-Street2',       'street2')
+                    insert(player,words,'D-City',          'city')
+                    insert(player,words,'D-state',         'state')
+                    insert(player,words,'E-zip',           'zip')
+                    insert(player,words,'F-phone',         'phone')
+                    insert(player,words,'H-E-Mail',        'email')
+                    insert(player,words,'Z-comments',      'comments')
+
+                    insert(player,words,'MS_A-B',          'ms-A')
+                    insert(player,words,'MD_A-B',          'md-A')
+                    insert(player,words,'WS_A-B',          'ws-A')
+                    insert(player,words,'WD_A-B',          'wd-A')
+                    insert(player,words,'MXD_A-B',         'xd-A')
+                    insert(player,words,'Partner_A-B',     'dp-A')
+                    insert(player,words,'Partner_MD_A-B',  'dp-A')
+                    insert(player,words,'Partner_WD_A-B',  'dp-A')
+                    insert(player,words,'Partner_MXD_A-B', 'xp-A')
+
+                    insert(player,words,'MS_C-D',          'ms-C')
+                    insert(player,words,'WS_C-D',          'ws-C')
+                    insert(player,words,'MD_C-D',          'md-C')
+                    insert(player,words,'WD_C-D',          'wd-C')
+                    insert(player,words,'MXD_C-D',         'xd-C')
+                    insert(player,words,'Partner_C-D',     'dp-C')
+                    insert(player,words,'Partner_MD_C-D',  'dp-C')
+                    insert(player,words,'Partner_WD_C-D',  'dp-C')
+                    insert(player,words,'Partner_MXD_C-D', 'xp-C')
+
+                    insert(player,words,'MS_SENIOR',          'ms-S')
+                    insert(player,words,'WS_SENIOR',          'ms-S')
+                    insert(player,words,'MD_SENIOR',          'md-S')
+                    insert(player,words,'WD_SENIOR',          'wd-S')
+                    insert(player,words,'MXD_SENIOR',         'xd-S')
+                    insert(player,words,'Partner_SENIOR',     'dp-S')
+                    insert(player,words,'Partner_MXD_SENIOR', 'xp-S')
+
+                    insert(player,words,'BS_JUNIORS',         'ms-J')
+                    insert(player,words,'GS_JUNIORS',         'ws-J')
+                    insert(player,words,'BD_JUNIORS',         'md-J')
+                    insert(player,words,'GD_JUNIORS',         'wd-J')
+                    insert(player,words,'MXD_JUNIORS',        'xd-J')
+                    insert(player,words,'Partner_JUNIORS',    'dp-J')
+                    insert(player,words,'Partner_MXD_JUNIORS','xp-J')
+        if cnt1==cnt2:
+            print "Found %d players in %s" % (cnt1,file)
+        else:
+            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+
+    # --------------------------------------------------------------------------------
+    
     def parse3(self,file):
         """parser for njopen"""
         def insert(player,words,keyform,key):
@@ -126,7 +217,7 @@ class Registration(object):
                     insert(player,words,'Partner_MXD_C-D', 'xp-C')
 
                     insert(player,words,'MS_SENIOR',          'ms-S')
-                    insert(player,words,'WS_SENIOR',          'ms-S')
+                    insert(player,words,'WS_SENIOR',          'ws-S')
                     insert(player,words,'MD_SENIOR',          'md-S')
                     insert(player,words,'WD_SENIOR',          'wd-S')
                     insert(player,words,'MXD_SENIOR',         'xd-S')
@@ -378,7 +469,7 @@ class Registration(object):
                 n = n+1
                 print "%2d: %s %s (%s)" % (n,player['fname'],player['lname'],player['state'])
                 sex = player['sex'][0]
-                if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex)
+                if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
         e=key[0:2]
         c=key[3:4]
         self.sum[c][e] = n
