@@ -393,6 +393,7 @@ class Registration(object):
 
     def match_count(self,p=2):
         def mp(n,p):
+            if n<2: return 0
             if p==1:
                 return n-1
             elif p==2:
