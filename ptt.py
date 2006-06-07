@@ -18,7 +18,7 @@ import os
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
     set of keyword=value pairs for each player. It is normally the output
-    of the web form where the players registered. 
+    of the web form where the players registered.
 
     You will however need to know which style this folder is in.
 
@@ -26,6 +26,14 @@ class Registration(object):
     d = Registration('dcopen06',1)        pjt's old dcopen style
     s = Registration('seniors2002,2)      pjt's old seniors style
     n = Registration('njopen',3)          eric miller's old style (at least for njopen)
+
+
+    A note on nomenclature:
+    We enforce the use of the following abbreviations for the categories:   ms, ws, md, wd, xd (lower case!)
+    But the letter(s) designating the categories can be choosen freely by the parser() routine. Typical
+    examples are:   A, C, J, S, U17, U15, S35, S40, S45 etc.
+    The 'event' is then made up of a category and level, e.g.   'ms-S'
+
     """
     def __init__(self,filename,method):
         self.method = method
