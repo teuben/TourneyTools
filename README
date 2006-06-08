@@ -41,3 +41,32 @@ s.list('ms-1')
 
 
 
+
+Of course this is no way to get the output in a file for further processing. So, here's
+the magic of shell scripts. Create a file like this:
+
+#! /bin/env python
+#
+
+import ptt
+
+r = ptt.Registration('seniors2006',2)
+r.sort1()
+r.list1()
+r.states()
+r.listall(True)
+r.need()
+r.map()
+r.match_count()
+
+
+and call it "seniors.py". This file can be created with any ordinary editor, e.g. emacs, vi or even notepad.
+To make this file executable, so you can run it from the command line, do this is unix:
+
+% chmod +x seniors.py
+
+after which you can run it as follows:
+
+% seniors.py > log1
+
+the output from the script has been redirected to a file called 'log1'
