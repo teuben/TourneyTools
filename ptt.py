@@ -52,6 +52,9 @@ class Registration(object):
         elif self.method==3:
             """eric miller's njopen"""
             self.parse3(self.filename)
+        elif self.method==4:
+            """eric miller's njopen"""
+            self.parse4(self.filename)
         else:
             print "Unimplemented method %d" % self.method
 
@@ -69,8 +72,11 @@ class Registration(object):
         def insert(player,words,keyform,key):
             if words[0] == keyform:
                 player[key] = words[1].strip()
+        def insert1(player,words,keyform,key,val):
+            if words[0] == keyform:
+                player[key] = val
         self.filename = file
-        self.cat = ['A', 'C', 'S', 'J']
+        self.cat = ['A', 'B', 'C', 'S', 'J']
         self.players = []
         self.reset()
         f = open(file,'r')
@@ -88,19 +94,22 @@ class Registration(object):
                     cnt1 = cnt1 + 1
                     inside = True
                     player={}
-                if words[0] == 'z-Thanks':
+                if words[0] == 'z-z-end':
                     cnt2 = cnt2 + 1
                     inside = False
                     q = self.player2(player['fname'],player['lname'])
                     if len(q) > 0:
                         print "###: Warning : player %s %s already registered" % (player['fname'],player['lname'])
+                    if not player.has_key('state'):
+                        player['state'] = '??'
+                    if not player.has_key('sex'):
+                        player['sex'] = '?'
                     self.players.append(player)
                 if inside:
                     insert(player,words,'A-firstname',     'fname')
                     insert(player,words,'A-lastname',      'lname')
                     insert(player,words,'A-nickname',      'nick')
                     insert(player,words,'A-usab-no',       'usab')
-                    insert(player,words,'gender',          'sex')
                     insert(player,words,'A-age',           'age')
                     insert(player,words,'A-birthdate',     'bday')
                     insert(player,words,'B-org',           'org')
@@ -112,42 +121,27 @@ class Registration(object):
                     insert(player,words,'F-phone',         'phone')
                     insert(player,words,'H-E-Mail',        'email')
                     insert(player,words,'Z-comments',      'comments')
+                    insert1(player,words,'WOMENS',      'sex','f')
+                    insert1(player,words,'MENS',        'sex','f')
+                    
 
-                    insert(player,words,'MS_A-B',          'ms-A')
-                    insert(player,words,'MD_A-B',          'md-A')
-                    insert(player,words,'WS_A-B',          'ws-A')
-                    insert(player,words,'WD_A-B',          'wd-A')
-                    insert(player,words,'MXD_A-B',         'xd-A')
-                    insert(player,words,'Partner_A-B',     'dp-A')
-                    insert(player,words,'Partner_MD_A-B',  'dp-A')
-                    insert(player,words,'Partner_WD_A-B',  'dp-A')
-                    insert(player,words,'Partner_MXD_A-B', 'xp-A')
 
-                    insert(player,words,'MS_C-D',          'ms-C')
-                    insert(player,words,'WS_C-D',          'ws-C')
-                    insert(player,words,'MD_C-D',          'md-C')
-                    insert(player,words,'WD_C-D',          'wd-C')
-                    insert(player,words,'MXD_C-D',         'xd-C')
-                    insert(player,words,'Partner_C-D',     'dp-C')
-                    insert(player,words,'Partner_MD_C-D',  'dp-C')
-                    insert(player,words,'Partner_WD_C-D',  'dp-C')
-                    insert(player,words,'Partner_MXD_C-D', 'xp-C')
+                    insert(player,words,'RR_Doubles_A',    'md-A')
+                    insert(player,words,'RR_Doubles_B',    'md-B')
+                    insert(player,words,'RR_Doubles_C',    'md-C')
 
-                    insert(player,words,'MS_SENIOR',          'ms-S')
-                    insert(player,words,'WS_SENIOR',          'ms-S')
-                    insert(player,words,'MD_SENIOR',          'md-S')
-                    insert(player,words,'WD_SENIOR',          'wd-S')
-                    insert(player,words,'MXD_SENIOR',         'xd-S')
-                    insert(player,words,'Partner_SENIOR',     'dp-S')
-                    insert(player,words,'Partner_MXD_SENIOR', 'xp-S')
+                    insert(player,words,'Partner_ABC',     'dp-A')
+                    insert(player,words,'Partner_ABC',     'dp-B')
+                    insert(player,words,'Partner_ABC',     'dp-C')
 
-                    insert(player,words,'BS_JUNIORS',         'ms-J')
-                    insert(player,words,'GS_JUNIORS',         'ws-J')
-                    insert(player,words,'BD_JUNIORS',         'md-J')
-                    insert(player,words,'GD_JUNIORS',         'wd-J')
-                    insert(player,words,'MXD_JUNIORS',        'xd-J')
-                    insert(player,words,'Partner_JUNIORS',    'dp-J')
-                    insert(player,words,'Partner_MXD_JUNIORS','xp-J')
+                    insert(player,words,'RR_MXDDoubles_A', 'xd-A')
+                    insert(player,words,'RR_MXDDoubles_B', 'xd-B')
+                    insert(player,words,'RR_MXDDoubles_C', 'xd-C')
+
+                    insert(player,words,'Partner_MXD',     'xp-A')
+                    insert(player,words,'Partner_MXD',     'xp-B')
+                    insert(player,words,'Partner_MXD',     'xp-C')
+
         if cnt1==cnt2:
             print "Found %d players in %s" % (cnt1,file)
         else:
@@ -185,6 +179,10 @@ class Registration(object):
                     q = self.player2(player['fname'],player['lname'])
                     if len(q) > 0:
                         print "###: Warning : player %s %s already registered" % (player['fname'],player['lname'])
+                    if not player.has_key('state'):
+                        player['state'] = '??'
+                    if not player.has_key('sex'):
+                        player['sex'] = '?'
                     self.players.append(player)
                 if inside:
                     insert(player,words,'A-firstname',     'fname')
@@ -487,12 +485,13 @@ class Registration(object):
             n = n + 1
             name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
             events = ""
+            sex = player['sex']
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
                     key = event+'-'+cat
                     if player.has_key(key):
                         events = events + " " + key
-            print "%3d: %-30s: %s" % (n,name,events)
+            print "%3d: %-30s %s: %s" % (n,name,sex[0],events)
         
             
     def listall(self,debug=False):
