@@ -365,6 +365,11 @@ class Registration(object):
     # --------------------------------------------------------------------------------
 
     def showcat(self):
+        """show all categories for this registration in a matrix
+        something like:
+        ms-A ws-A md-A wd-A xd-A
+        ms-C ws-C md-C wd-C xd-C
+        """
         for c in self.cat:
             print "ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c)
 
@@ -418,6 +423,7 @@ class Registration(object):
         sumall = sum[0]+sum[1]+sum[2]+sum[3]+sum[4]
         print "     ---  ---  ---  ---  ---   | ---" 
         print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
+        print "  (warning: as long as REQ partners have not been matched up, this match count is too large)"
 
     def conflicts(self):
         """identify various conflicts:
@@ -476,6 +482,27 @@ class Registration(object):
             if name_a >  name_b: return 1
             return 0
         self.players.sort(cmpfunc)
+
+    def show1(self,name):
+        """find a player. you can give just the first name, last name, or both."""
+        p = self.player1(name)
+        if len(p) == 0:
+            print "No player found"
+            return
+        print "%s %s (%s) %s" % (p['fname'],p['lname'],p['state'],p['sex'][0])
+        for cat in self.cat:
+            for event in ['ms','ws','md','wd','xd']:
+                key = event+'-'+cat
+                if p.has_key(key):
+                    if key[1]=='d':
+                        key1 = self.partner_key(key)
+                        if p.has_key(key1):
+                            partner = p[key1]
+                        else:
+                            partner = '???'
+                    else:
+                        partner = ""
+                    print "%s : %s" % (key,partner)
             
     def list1(self):
         """list of all players and their events"""
@@ -554,6 +581,15 @@ class Registration(object):
         c=key[3:4]
         self.sum[c][e] = n
 
+    def partner_key(self,key):
+        if key[1] == 'd':
+            if key[0] == 'x':
+                return 'xp-' + key[3:]
+            else:
+                return 'dp-' + key[3:]
+        else:
+            return "### Illegal partner key for %s" % key
+
     def doubles(self,key,debug=True):
         """created a list of a doubles entries
         doubles(players,key1), e.g. doubles(p,'md-A')
@@ -624,6 +660,8 @@ class Registration(object):
         return {}
 
     def player1(self,name):
+        """find the first player that matches the name; some freedom in choosing Fname, Lname or both
+        """
         for player in self.players:
             if player['fname']==name or player['lname']==name:
                 return player
@@ -645,5 +683,7 @@ class Registration(object):
                     return player
         if len(names) == 4:
             print "### Name with 4 words???: " % names
+        # having arrived here, no exact match was found, should try partial
         return {}
+
 
