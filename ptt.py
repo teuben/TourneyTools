@@ -606,6 +606,7 @@ class Registration(object):
         # set this tag to 0 if we've not seen this person
         for player in self.players:
             player[0] = 0
+        needy_players = []
         # loop over all players, and see if they play in "key"
         for player in self.players:
             if player.has_key(key):
@@ -647,8 +648,14 @@ class Registration(object):
                     print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
                     if partner != "???" and partner != "need" and partner != "REQ":
                         self.missing.append(partner)
-                    
-                
+                    else:
+                        needy_players.append("%s %s" % (player['fname'],player['lname']))
+        if len(needy_players) > 0:
+            print "== Partners Requested in %s by: =============" % key
+            for np in needy_players:
+                print np
+            print "============================================="
+
         e=key[0:2]
         c=key[3:]
         self.sum[c][e] = n
