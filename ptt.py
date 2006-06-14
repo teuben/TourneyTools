@@ -115,7 +115,7 @@ class Registration(object):
                     insert(player,words,'B-org',           'org')
                     insert(player,words,'C-Street1',       'street')
                     insert(player,words,'C-Street2',       'street2')
-                    insert(player,words,'D-City',          'city')
+                    insert(player,words,'D-city',          'city')
                     insert(player,words,'D-state',         'state')
                     insert(player,words,'E-zip',           'zip')
                     insert(player,words,'F-phone',         'phone')
@@ -195,7 +195,7 @@ class Registration(object):
                     insert(player,words,'B-org',           'org')
                     insert(player,words,'C-Street1',       'street')
                     insert(player,words,'C-Street2',       'street2')
-                    insert(player,words,'D-City',          'city')
+                    insert(player,words,'D-city',          'city')
                     insert(player,words,'D-state',         'state')
                     insert(player,words,'E-zip',           'zip')
                     insert(player,words,'F-phone',         'phone')
@@ -393,6 +393,7 @@ class Registration(object):
         sumall = sum[0]+sum[1]+sum[2]+sum[3]+sum[4]
         print "     ---  ---  ---  ---  ---   | ---" 
         print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
+        print "Number of payments: %d" % (sum[0]+sum[1]+2*sum[2]+2*sum[3]+2*sum[4])
 
     def match_count(self,p=2):
         def mp(n,p):
@@ -519,6 +520,18 @@ class Registration(object):
                     if player.has_key(key):
                         events = events + " " + key
             print "%3d: %-30s %s: %s" % (n,name,sex[0],events)
+        
+            
+    def list2(self):
+        """list of all players, city, state and USAB number.. meant for the USAB"""
+        n = 0
+        print "Participants: "
+        for player in self.players:
+            n = n + 1
+            city='???'
+            if player.has_key('city'): city = player['city']
+            name = "%-15s, %-15s (%s, %s)" % (player['lname'],player['fname'],city,player['state'])
+            print "%3d: %s" % (n,name)
         
             
     def listall(self,debug=False):
