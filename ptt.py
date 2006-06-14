@@ -15,6 +15,17 @@ ptt_version = "$Revision$  $Date$"
 
 import os
 
+class Eopen(object):
+    def __init__(self,name,basedir='events.d'):
+        self.basedir = basedir
+        # os.mkdir(basedir)
+        file = basedir + '/' + name + ".list"
+        self.fd = open(file,'w')
+    def write(self,s):
+        self.fd.write(s)
+    def close(self):
+        self.fd.close()
+        
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
     set of keyword=value pairs for each player. It is normally the output
@@ -525,13 +536,16 @@ class Registration(object):
     def list2(self):
         """list of all players, city, state and USAB number.. meant for the USAB"""
         n = 0
-        print "Participants: "
+        print "Participants and USAB membership: "
         for player in self.players:
             n = n + 1
             city='???'
+            usab='?'
             if player.has_key('city'): city = player['city']
-            name = "%-15s, %-15s (%s, %s)" % (player['lname'],player['fname'],city,player['state'])
-            print "%3d: %s" % (n,name)
+            if player.has_key('usab'): usab = player['usab']
+            name = "%-15s, %-15s " % (player['lname'],player['fname'])
+            place = "%-20s %2s" % (city,player['state'])
+            print "%3d: %s %s : %s" % (n,name,place,usab)
         
             
     def listall(self,debug=False):
@@ -584,15 +598,18 @@ class Registration(object):
         """
         n = 0
         need_sex = key[0]
+        ev = Eopen(key)
         for player in self.players:
             if player.has_key(key):
                 n = n+1
                 print "%2d: %s %s (%s)" % (n,player['fname'],player['lname'],player['state'])
+                ev.write("%s %s (%s)\n" % (player['fname'],player['lname'],player['state']))
                 sex = player['sex'][0]
                 if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
         e=key[0:2]
         c=key[3:4]
         self.sum[c][e] = n
+        ev.close()
 
     def partner_key(self,key):
         if key[1] == 'd':
@@ -609,6 +626,7 @@ class Registration(object):
         key:     md-XXX, wd-XXX, xd-XXX
         """
         n = 0
+        ev = Eopen(key)        
         need_sex = key[0]
         if key[0] == 'x':
             mixed = True
@@ -654,15 +672,24 @@ class Registration(object):
                         # the next line should be the final and only line for printout in the final correct version
                         # the others are all for debugging and otherwise "should never happen" if all is well in the db
                         if mixed and sex=='m':
-                            print "%2d:: %s %s / %s (%s)" % (n,player['fname'],player['lname'],partner,state)
+                            s = "%s %s / %s (%s)" % (player['fname'],player['lname'],partner,state)
                         else:
-                            print "%2d:: %s / %s %s (%s)" % (n,partner,player['fname'],player['lname'],state)
+                            s = "%s / %s %s (%s)" % (partner,player['fname'],player['lname'],state)
+                        print "%2d:: %s" % (n,s)
+                        ev.write("%s\n" % s)
                 else:
-                    print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
+                    if debug:
+                        print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
                     if partner != "???" and partner != "need" and partner != "REQ":
                         self.missing.append(partner)
+                        if not debug:
+                            s = "%s %s / %s (%s) ** not reg ** " % (player['fname'],player['lname'],partner,player['state'])
+                            print "%2d:: %s" % (n,s)
+                            ev.write("%s\n" % s)
                     else:
-                        needy_players.append("%s %s" % (player['fname'],player['lname']))
+                        s = "%s %s (%s)" % (player['fname'],player['lname'],player['state'])
+                        needy_players.append(s)
+                        ev.write("%-40s    **REQ**\n" % s)
         if len(needy_players) > 0:
             print "== Partners Requested in %s by: =============" % key
             for np in needy_players:
