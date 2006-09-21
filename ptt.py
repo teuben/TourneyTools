@@ -548,6 +548,18 @@ class Registration(object):
             print "%3d: %s %s : %s" % (n,name,place,usab)
         
             
+    def list3(self,verbose=True):
+        """list of all players, and their emails"""
+        for player in self.players:
+            if player.has_key('email'):
+                email = player['email']
+                if len(email) > 0:
+                    name = "%s %s" % (player['fname'],player['lname'])
+                    if verbose:
+                        print '"%s" <%s>' % (name,email)
+                    else:
+                        print "   "+email+","
+        
     def listall(self,debug=False):
         """loop over all events in the tournament and list them.
         to do just one, use list(event)
@@ -734,3 +746,5 @@ class Registration(object):
         return {}
 
 
+
+##  there is no __main__ check and execute; this code is import'd and used
