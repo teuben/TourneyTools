@@ -13,7 +13,7 @@
 
 ptt_version = "$Revision$  $Date$"
 
-import os
+import os,sys
 
 class Eopen(object):
     def __init__(self,name,basedir='events.d'):
@@ -33,11 +33,12 @@ class Registration(object):
 
     You will however need to know which style this folder is in.
 
-    We now have three:
+    We now have several:
     d = Registration('dcopen06',1)        pjt's old dcopen style
     s = Registration('seniors2002,2)      pjt's old seniors style
     n = Registration('njopen',3)          eric miller's old style (at least for njopen)
-
+    m = Registration('mida',5)            pjt's new MIDA style
+    
 
     A note on nomenclature:
     We enforce the use of the following abbreviations for the categories:   ms, ws, md, wd, xd (lower case!)
@@ -66,6 +67,9 @@ class Registration(object):
         elif self.method==4:
             """eric miller's njopen"""
             self.parse4(self.filename)
+        elif self.method==5:
+            """new MIDA"""
+            self.parse5(self.filename)
         else:
             print "Unimplemented method %d" % self.method
 
@@ -75,6 +79,75 @@ class Registration(object):
             self.sum[c] = {}
             for e in ['ms', 'ws', 'md', 'wd', 'xd']:
                 self.sum[c][e] = 0
+
+    # --------------------------------------------------------------------------------
+    
+    def parse5(self,file):
+        """parser for MIDA 2006 """
+        def insert(player,words,keyform,key):
+            if words[0] == keyform:
+                player[key] = words[1].strip()
+        def inserte(event,words,keyform):
+            if words[0] == keyform and len(words[1])>0:
+                event[key] = words[1]
+        self.filename = file
+        self.cat = ['A', 'B', 'S']
+        self.players = []
+        self.reset()
+        f = open(file,'r')
+        a = f.readlines()
+        f.close()       
+        cnt1 = 0
+        cnt2 = 0
+        inside = False
+        for l in a:
+            line = l.strip()
+            words = line.split('=')
+            if len(words) > 0:
+                if words[0] == 'BEGIN':
+                    cnt1 = cnt1 + 1
+                    inside = True
+                    player={}
+                    event={}
+                if words[0] == 'END':
+                    cnt2 = cnt2 + 1
+                    inside = False
+                    # max 5 events
+                    for number in ['1','2','3','4','5']:
+                        keye = 'event'+number
+                        keyp = 'partner'+number
+                        if event.has_key(keye):
+                            if  event[keye] == 'none': continue
+                            new_key = event[keye]
+                            player[new_key] = 1
+                            cat = new_key[3:]
+                            if new_key[1] == 'd':
+                                if new_key[0] == 'm' or new_key[0] == 'w':
+                                    new_key = 'dp-' + cat
+                                elif new_key[0] == 'x':
+                                    new_key = 'xp-' + cat
+                                else:
+                                    new_key = '?p-' + cat
+                                partner = '???'
+                                if event.has_key(keyp):
+                                    partner = event[keyp]
+                                player[new_key] = partner
+                    # insert(player,['state','XX'],'state','state')
+                    self.players.append(player)
+                if inside:
+                    insert(player,words,'fname',     'fname')
+                    insert(player,words,'lname',     'lname')
+                    insert(player,words,'sex',       'sex')
+                    insert(player,words,'state',     'state')
+                    # search for 6 events (though they can't play 6 of course)
+                    for number in ['1','2','3','4','5', '6']:
+                        for thing in ['event', 'partner']:
+                            key   = thing+number
+                            inserte(event,words,key)
+        if cnt1==cnt2:
+            print "Found %d players in %s" % (cnt1,file)
+        else:
+            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
 
     # --------------------------------------------------------------------------------
     
@@ -455,8 +528,12 @@ class Registration(object):
                 if p.has_key(key1) and p.has_key(key2):
                     print "###: Player %s %s overlapping %s and %s" % (p['fname'],p['lname'],key1,key2)
 
-    def states(self):
-        print "Participants per state: "
+    def states(self,out=sys.stdout):
+        """Show state statistics.
+        Optionally a filename can be given, defaults to screen"""
+        if out!=sys.stdout:
+            out=open(out,"w")
+        out.write("Participants per state: \n")
         count={}
         for p in self.players:
             state = p['state']
@@ -465,7 +542,9 @@ class Registration(object):
             else:
                 count[state] = 1
         for state in count.keys():
-            print "%s : %d" % (state,count[state])
+            out.write("%s : %d\n" % (state,count[state]))
+        if out!=sys.stdout:
+            out.close()
 
     def need(self):
         print "Checking for need partners:" 
@@ -486,6 +565,7 @@ class Registration(object):
                             print "###: %s  =>  %-20s    w/ %s" % (key,player,partner)
 
     def sort1(self):
+        """Sort players alphabetically"""
         def cmpfunc(a,b):
             name_a = a['lname'] + ' ' + a['fname'] 
             name_b = b['lname'] + ' ' + b['fname'] 
@@ -516,10 +596,13 @@ class Registration(object):
                         partner = ""
                     print "%s : %s" % (key,partner)
             
-    def list1(self):
-        """list of all players and their events"""
+    def list1(self,out=sys.stdout):
+        """list of all players and their events.
+        Optionally a filename can be given, defaults to screen"""
         n = 0
-        print "Participants: "
+        if out!=sys.stdout:
+            out=open(out,"w")
+        out.write("%s\n" % "Participants: ");
         for player in self.players:
             n = n + 1
             name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
@@ -530,13 +613,17 @@ class Registration(object):
                     key = event+'-'+cat
                     if player.has_key(key):
                         events = events + " " + key
-            print "%3d: %-30s %s: %s" % (n,name,sex[0],events)
+            out.write("%3d: %-30s %s: %s\n" % (n,name,sex[0],events))
+        if out!=sys.stdout:
+            out.close()
         
             
-    def list2(self):
+    def list2(self,out=sys.stdout):
         """list of all players, city, state and USAB number.. meant for the USAB"""
         n = 0
-        print "Participants and USAB membership: "
+        if out!=sys.stdout:
+            out=open(out,"w")
+        out.write("Participants and USAB membership: \n");
         for player in self.players:
             n = n + 1
             city='???'
@@ -545,20 +632,26 @@ class Registration(object):
             if player.has_key('usab'): usab = player['usab']
             name = "%-15s, %-15s " % (player['lname'],player['fname'])
             place = "%-20s %2s" % (city,player['state'])
-            print "%3d: %s %s : %s" % (n,name,place,usab)
+            out.write("%3d: %s %s : %s\n" % (n,name,place,usab))
+        if out!=sys.stdout:
+            out.close()
         
             
-    def list3(self,verbose=True):
+    def list3(self,out=sys.stdout,verbose=True):
         """list of all players, and their emails"""
+        if out!=sys.stdout:
+            out=open(out,"w")
         for player in self.players:
             if player.has_key('email'):
                 email = player['email']
                 if len(email) > 0:
                     name = "%s %s" % (player['fname'],player['lname'])
                     if verbose:
-                        print '"%s" <%s>' % (name,email)
+                        out.write('"%s" <%s>' % (name,email))
                     else:
-                        print "   "+email+","
+                        out.write("   "+email+",")
+        if out!=sys.stdout:
+            out.close()
         
     def listall(self,debug=False):
         """loop over all events in the tournament and list them.
