@@ -14,7 +14,7 @@
 
 ptt_version = "$Revision$  $Date$"
 
-import os,sys
+import os,sys,time
 
 class Eopen(object):
     def __init__(self,name,basedir='events.d'):
@@ -26,6 +26,88 @@ class Eopen(object):
         self.fd.write(s)
     def close(self):
         self.fd.close()
+
+class USAB(object):
+    """Manage a USAB list. Currently the format contains the following columns,
+    that can be accessed by the array self.players[]:
+     0 'MemberID',
+     1 'Name',
+     2 'Firstname',
+     3 'Middlename',
+     4 'Address',
+     5 'Address2',
+     6 'City',
+     7 'State',
+     8 'Postalcode',
+     9 'Country',
+    10 'PhoneHome',
+    11 'PhoneWork',
+    12 'Email',
+    13 'Gender',
+    14 'DOB',
+    15 'Club', 
+    16 'EXP'
+    """
+   
+    def __init__(self,filename):
+        self.filename = filename
+        fd = open(filename,'r')
+        self.lines=fd.readlines()
+        fd.close()
+        print "Read %d lines from %s" % (len(self.lines),filename)
+        self.players=[]
+        count = 0
+        for l in self.lines:
+            p = l.strip()
+            if count==0:
+                self.id=p.split(',')
+                print "Header:",self.id
+            else:
+                id = p.split(',')
+                id[0] = int(id[0])
+                self.players.append(id)
+            count = count + 1
+    def count(self):
+        print len(self.players)
+    def findbyname(self,name):
+        """enter a name, first or last name
+        Note names must be all in upper case
+        """
+        names = name.split()
+        found=[]
+        if len(names)==2:
+            for i in self.players:
+                if names[0]==i[2] and names[1]==i[1]:
+                    found.append(i)
+        elif len(names)==1:
+            for i in self.players:
+                if names[0]==i[1]:
+                    found.append(i)
+            for i in self.players:
+                if names[0]==i[2]:
+                    found.append(i)
+        else:
+            print "Cannot find names like : ",name
+        if len(found) > 1:
+            all = []
+            for i in found:
+                print "%s %s" % (i[2],i[1])
+            return []
+        return found
+    def findbyusab(self,usab):
+        """enter a USAB number, e.g. 132, 400857"""
+        for i in self.players:
+            if usab==i[0]:
+                return i
+        return []
+    def findbusabfromname(self,name):
+        """enter a USAB number, e.g. 132, 400857"""
+        i = self.findbyname(name)
+        if len(i) > 0:
+            return i[0][0]
+        return 0
+            
+            
         
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
@@ -55,6 +137,7 @@ class Registration(object):
         print "  [Using software PTT %s]" % ptt_version
         print ""
         os.system('date')
+        self.ctime = time.ctime()
     def reload(self):
         if self.method==1:
             """old dcopen"""
@@ -597,12 +680,13 @@ class Registration(object):
                         partner = ""
                     print "%s : %s" % (key,partner)
             
-    def list1(self,out=sys.stdout):
+    def list1(self,out=sys.stdout,missing=True):
         """list of all players and their events.
         Optionally a filename can be given, defaults to screen"""
         n = 0
         if out!=sys.stdout:
             out=open(out,"w")
+        out.write("Status: %s\n" % self.ctime)
         out.write("%s\n" % "Participants: ");
         for player in self.players:
             n = n + 1
@@ -615,6 +699,21 @@ class Registration(object):
                     if player.has_key(key):
                         events = events + " " + key
             out.write("%3d: %-30s %s: %s\n" % (n,name,sex[0],events))
+        if missing:
+            if len(self.missing) > 0:
+                out.write("===Missing players:\n");
+                old = ""
+                count = 0
+                for i in self.missing:
+                    if i != old:
+                        count = count + 1
+                        out.write("%3d: %s\n" % (count,i))
+                    old = i
+                    print ""
+            else:
+                out.write("===No missing players yet:\n");
+                
+                
         if out!=sys.stdout:
             out.close()
         
