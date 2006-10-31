@@ -7,6 +7,7 @@
 #  This work is based on the earlier awk/grep/sed/csh scripts
 #  that have been used pre-2006.
 #  First tested on Seniors 2006 and NJ Open 2006, both June 2006.
+#  Continued with MIDA06 and DCOPEN07
 #
 #  $Id$
 #
@@ -560,7 +561,7 @@ class Registration(object):
                             key1 = 'dp-' + l
                         if p.has_key(key1):
                             partner = p[key1]
-                        if partner == "need" or partner == "???" or partner == "REQ" or partner == "request":
+                        if partner == "need" or partner == "???" or partner == "REQ" or partner == "TBA" or partner == "request":
                             player = "%s %s" % (p['fname'],p['lname'])
                             print "###: %s  =>  %-20s    w/ %s" % (key,player,partner)
 
@@ -785,7 +786,7 @@ class Registration(object):
                 else:
                     if debug:
                         print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
-                    if partner != "???" and partner != "need" and partner != "REQ":
+                    if partner != "???" and partner != "need" and partner != "REQ" and partner != "TBA":
                         self.missing.append(partner)
                         if not debug:
                             s = "%s %s / %s (%s) ** not reg ** " % (player['fname'],player['lname'],partner,player['state'])
