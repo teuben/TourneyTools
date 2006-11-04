@@ -100,7 +100,7 @@ class USAB(object):
             if usab==i[0]:
                 return i
         return []
-    def findbusabfromname(self,name):
+    def findusabfromname(self,name):
         """enter a USAB number, e.g. 132, 400857"""
         i = self.findbyname(name)
         if len(i) > 0:
@@ -223,6 +223,7 @@ class Registration(object):
                     insert(player,words,'lname',     'lname')
                     insert(player,words,'sex',       'sex')
                     insert(player,words,'state',     'state')
+                    insert(player,words,'usabnum',   'usab')
                     # search for 6 events (though they can't play 6 of course)
                     for number in ['1','2','3','4','5', '6']:
                         for thing in ['event', 'partner']:
@@ -718,7 +719,7 @@ class Registration(object):
             out.close()
         
             
-    def list2(self,out=sys.stdout):
+    def list2(self,u,out=sys.stdout):
         """list of all players, city, state and USAB number.. meant for the USAB"""
         n = 0
         if out!=sys.stdout:
@@ -732,7 +733,9 @@ class Registration(object):
             if player.has_key('usab'): usab = player['usab']
             name = "%-15s, %-15s " % (player['lname'],player['fname'])
             place = "%-20s %2s" % (city,player['state'])
-            out.write("%3d: %s %s : %s\n" % (n,name,place,usab))
+            uname = player['fname'] + ' ' + player['lname']
+            findu = u.findusabfromname(uname.upper())
+            out.write("%3d: %s %s : %-10s : %s\n" % (n,name,place,usab,findu))
         if out!=sys.stdout:
             out.close()
         
