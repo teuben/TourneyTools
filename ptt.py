@@ -11,6 +11,9 @@
 #
 #  $Id$
 #
+#  todo:
+#     check if an entry doesn't have the same person twice
+#     check if a name is a single name, no last name, if it's checked properly and flagged if not there
 
 ptt_version = "$Revision$  $Date$"
 
@@ -60,12 +63,14 @@ class USAB(object):
         for l in self.lines:
             p = l.strip()
             if count==0:
-                self.id=p.split(',')
+                self.id=p.split('\t')
                 print "Header:",self.id
             else:
-                id = p.split(',')
+                id = p.split('\t')
                 id[0] = int(id[0])
                 self.players.append(id)
+                while len(id) < 17:
+                    id.append(" ")
             count = count + 1
     def count(self):
         print len(self.players)
@@ -75,7 +80,13 @@ class USAB(object):
         """
         names = name.split()
         found=[]
-        if len(names)==2:
+        if len(names)==3:
+            fname=names[0] + ' ' + names[1]
+            lname=names[2]
+            for i in self.players:
+                if fname==i[2] and lname==i[1]:
+                    found.append(i)
+        elif len(names)==2:
             for i in self.players:
                 if names[0]==i[2] and names[1]==i[1]:
                     found.append(i)
@@ -101,11 +112,11 @@ class USAB(object):
                 return i
         return []
     def findusabfromname(self,name):
-        """enter a USAB number, e.g. 132, 400857"""
+        """find a USAB number and expiration date, e.g. 132, 400857"""
         i = self.findbyname(name)
         if len(i) > 0:
-            return i[0][0]
-        return 0
+            return (i[0][0],i[0][16])
+        return (0,0)
             
             
         
@@ -193,10 +204,12 @@ class Registration(object):
                     inside = True
                     player={}
                     event={}
+                    raw=[]
                 if words[0] == 'END':
                     cnt2 = cnt2 + 1
                     inside = False
                     # max 5 events
+                    player['entry'] = raw
                     for number in ['1','2','3','4','5']:
                         keye = 'event'+number
                         keyp = 'partner'+number
@@ -219,11 +232,20 @@ class Registration(object):
                     # insert(player,['state','XX'],'state','state')
                     self.players.append(player)
                 if inside:
+                    if words[0] != 'BEGIN':
+                        raw.append(line)
                     insert(player,words,'fname',     'fname')
                     insert(player,words,'lname',     'lname')
                     insert(player,words,'sex',       'sex')
+                    insert(player,words,'city',      'city')
+                    insert(player,words,'address',   'address')
                     insert(player,words,'state',     'state')
+                    insert(player,words,'zip',       'zip')
                     insert(player,words,'usabnum',   'usab')
+                    insert(player,words,'cphone',    'cphone')
+                    insert(player,words,'dphone',    'dphone')
+                    insert(player,words,'ephone',    'ephone')
+                    insert(player,words,'email',     'email')
                     # search for 6 events (though they can't play 6 of course)
                     for number in ['1','2','3','4','5', '6']:
                         for thing in ['event', 'partner']:
@@ -722,6 +744,7 @@ class Registration(object):
     def list2(self,u,out=sys.stdout):
         """list of all players, city, state and USAB number.. meant for the USAB"""
         n = 0
+        ngood = 0
         if out!=sys.stdout:
             out=open(out,"w")
         out.write("Participants and USAB membership: \n");
@@ -734,8 +757,14 @@ class Registration(object):
             name = "%-15s, %-15s " % (player['lname'],player['fname'])
             place = "%-20s %2s" % (city,player['state'])
             uname = player['fname'] + ' ' + player['lname']
-            findu = u.findusabfromname(uname.upper())
-            out.write("%3d: %s %s : %-10s : %s\n" % (n,name,place,usab,findu))
+            (findu,exp) = u.findusabfromname(uname.upper())
+            player['usab0'] = findu
+            if usab>0 and findu>0 and usab==findu:
+                ngood=ngood + 1
+                star = "*"
+            else:
+                star = " "
+            out.write("%3d: %s %s :%s: %-10s : %-10s  %s\n" % (n,name,place,star,usab,findu,exp))
         if out!=sys.stdout:
             out.close()
         
@@ -755,7 +784,106 @@ class Registration(object):
                         out.write("   "+email+",")
         if out!=sys.stdout:
             out.close()
+
+    def list4(self,out=sys.stdout, replicate=0, formfeed=False):
+        """Registration list, library card  style
+        replicate = number of times a record is repeated per page
+        formfeed = formfeed after each player?
+        """
+        if out!=sys.stdout:
+            out=open(out,"w")
+        for player in self.players:
+            out.write("%-15s, %-15s\n" % (player['lname'],player['fname']))
+            out.write(" \n" )
+            out.write("%s, %s\n" % (player['city'],player['state']))
+            for line in player['entry']:
+                out.write("    %s\n" % line)
+            for number in ['1','2','3','4','5']:
+                key1 = 'event%s' % number
+                key2 = 'partner%s' % number
+                if player.has_key(key1):
+                    if player.has_key(key2):
+                        p = player[key2]
+                    else:
+                        p = ""
+                    out.write("%s  (%s)\n" % (player[key1],p))
+            out.write("_____________________________________________________________\n\n");
+            
+        if out!=sys.stdout:
+            out.close()
         
+    def list5(self,u,out=sys.stdout):
+        """Database dump in csv format for the TP program"""
+        def all_events(n,lines):
+            """lines is a set of lines that contain event1=, partner1=.... 3"""
+            out=[]
+            for i in range(n):
+                out.append(["",""])
+            for l in lines:
+                kv=l.split("=")
+                if kv[0]=="event1":
+                    out[0][0]=kv[1]
+                if kv[0]=="event2":
+                    out[1][0]=kv[1]
+                if kv[0]=="event3":
+                    out[2][0]=kv[1]
+                if kv[0]=="partner1":
+                    out[0][1]=kv[1]
+                if kv[0]=="partner2":
+                    out[1][1]=kv[1]
+                if kv[0]=="partner3":
+                    out[2][1]=kv[1]
+                    
+            return out
+        if out!=sys.stdout:
+            out=open(out,"w")
+        header=[]
+        header.append("USAB")
+        header.append("USABref")
+        header.append("lname")
+        header.append("fname")
+        header.append("sex")
+        header.append("address")
+        header.append("city")
+        header.append("state")
+        header.append("zip")
+        header.append("cphone")
+        header.append("dphone")
+        header.append("ephone")
+        header.append("email")
+        header.append("event1")
+        header.append("partner1")
+        header.append("event2")
+        header.append("partner2")
+        header.append("event3")
+        header.append("partner3")
+        for h in header:
+            out.write("\"%s\"," % h)
+        out.write("\"country\"\n")
+        for player in self.players:
+            out.write("\"%s\"," % player["usab"])
+            out.write("\"%s\"," % player["usab0"])
+            out.write("\"%s\"," % player["lname"])
+            out.write("\"%s\"," % player["fname"])
+            out.write("\"%s\"," % player["sex"])
+            out.write("\"%s\"," % player["address"])
+            out.write("\"%s\"," % player["city"])
+            out.write("\"%s\"," % player["state"])
+            out.write("\"%s\"," % player["zip"])
+            out.write("\"%s\"," % player["cphone"])
+            out.write("\"%s\"," % player["dphone"])
+            out.write("\"%s\"," % player["ephone"])
+            out.write("\"%s\"," % player["email"])
+            events = all_events(3,player['entry'])
+            for i in [0,1,2]:
+                out.write("\"%s\"," % events[i][0])
+                out.write("\"%s\"," % events[i][1])
+            # out.write("\"%s\"," % player["event1"])            
+            out.write("\"usa\"\n")
+            print player
+        if out!=sys.stdout:
+            out.close()
+            
     def listall(self,debug=False):
         """loop over all events in the tournament and list them.
         to do just one, use list(event)
