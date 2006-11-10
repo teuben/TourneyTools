@@ -16,6 +16,7 @@
 #     check if a name is a single name, no last name, if it's checked properly and flagged if not there
 #     not very good (in non-=debug mode) in finding mis-registered accross events
 #     not very good in detecting multiple event1='s
+#     under the pressure of MIDA time, lots of horrible things added last days
 
 ptt_version = "$Revision$  $Date$"
 
@@ -250,6 +251,8 @@ class Registration(object):
                     insert(player,words,'dphone',    'dphone')
                     insert(player,words,'ephone',    'ephone')
                     insert(player,words,'email',     'email')
+                    insert(player,words,'dues',      'dues')
+                    insert(player,words,'usabfee',   'usabfee')
                     # search for 6 events (though they can't play 6 of course)
                     for number in ['1','2','3','4','5', '6']:
                         for thing in ['event', 'partner']:
@@ -774,6 +777,44 @@ class Registration(object):
         
                    
             
+    def list1_money(self,out=sys.stdout):
+        """list of all players and their events.
+        Optionally a filename can be given, defaults to screen"""
+        n = 0
+        if out!=sys.stdout:
+            out=open(out,"w")
+        out.write("Status: %s\n" % self.ctime)
+        out.write("%s\n" % "Participants: ");
+        for player in self.players:
+            n = n + 1
+            name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
+            events = ""
+            sex = player['sex']
+            email = player['email']
+            dues = int(player['dues'])
+            usab  = player['usab']
+            usab0 = player['usab0']
+            usabfee = int(player['usabfee'])
+            k=0
+            for cat in self.cat:
+                for event in ['ms','ws','md','wd','xd']:
+                    key = event+'-'+cat
+                    if player.has_key(key):
+                        events = events + " " + key
+                        k = k + 1
+            for i in range(k,3):
+                events = events + "     "
+            topay1=5+20*k
+            topay2=0
+            if usab=="0":
+                topay2=25
+            out.write("%3d: %-30s %s: %s : %-10s %-10s : %3d : %3d - %3d - %3d  = %3d  \n" % (n,name,sex[0], events, usab,usab0, usabfee, dues,topay1,topay2,dues-topay1-topay2))
+                
+        if out!=sys.stdout:
+            out.close()
+        
+                   
+            
     def list2(self,u,out=sys.stdout):
         """list of all players, city, state and USAB number.. meant for the USAB"""
         n = 0
@@ -791,6 +832,7 @@ class Registration(object):
             place = "%-20s %2s" % (city,player['state'])
             uname = player['fname'] + ' ' + player['lname']
             (findu,exp) = u.findusabfromname(uname.upper())
+            player['usabexp'] = exp
             player['usab0'] = findu
             # findu = int(findu)
             if usab>0 and findu>0 and usab==findu:
@@ -828,22 +870,48 @@ class Registration(object):
         if out!=sys.stdout:
             out=open(out,"w")
         for player in self.players:
-            out.write("%-15s, %-15s\n" % (player['lname'],player['fname']))
-            out.write(" \n" )
+            out.write("%-15s, %-15s" % (player['lname'],player['fname']))
+            out.write("                                   %s\n" % player['lname'])
+            out.write("---------------  ---------------\n");
+            out.write("%s\n" % (player['address']))
             out.write("%s, %s\n" % (player['city'],player['state']))
-            out.write("");
+            usab  = player['usab']
+            usab0 = player['usab0']
+            dues = int(player['dues'])
+            usabfee = int(player['usabfee'])
+            usabexp = player['usabexp']
+            out.write("USAB: %s   Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
+            out.write("\n");
+
+            k=0
+            for cat in self.cat:
+                for event in ['ms','ws','md','wd','xd']:
+                    key = event+'-'+cat
+                    if player.has_key(key):
+                        k = k + 1
+                        if key[1]=='d':
+                            if key[0]=='x':
+                                pkey = 'xp-'+cat
+                            else:
+                                pkey = 'dp-'+cat
+                            out.write("%s : %s\n" % (key,player[pkey]))
+                        else:
+                            out.write("%s\n" % key)
+
+            topay1=5+20*k
+            topay2=0
+            if usab=="0":
+                topay2=25
+
+            out.write("\n");
+            out.write("Paid:     %d\n" % dues)
+            out.write("USAB fee: %d\n" % usabfee)
+            out.write("Due:      %d    =   %d (paid) - %d (entry) - %d (usab)\n" % (dues-topay1-topay2,dues,topay1,topay2))
+
+            out.write("______________  \n\n");
             for line in player['entry']:
                 out.write("    %s\n" % line)
-            for number in ['1','2','3','4','5']:
-                key1 = 'event%s' % number
-                key2 = 'partner%s' % number
-                if player.has_key(key1):
-                    if player.has_key(key2):
-                        p = player[key2]
-                    else:
-                        p = ""
-                    out.write("%s  (%s)\n" % (player[key1],p))
-            out.write("_____________________________________________________________\n\n");
+            out.write("_____________________________________________________________\n\n");
             
         if out!=sys.stdout:
             out.close()
