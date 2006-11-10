@@ -14,6 +14,8 @@
 #  todo:
 #     check if an entry doesn't have the same person twice
 #     check if a name is a single name, no last name, if it's checked properly and flagged if not there
+#     not very good (in non-=debug mode) in finding mis-registered accross events
+#     not very good in detecting multiple event1='s
 
 ptt_version = "$Revision$  $Date$"
 
@@ -112,7 +114,9 @@ class USAB(object):
                 return i
         return []
     def findusabfromname(self,name):
-        """find a USAB number and expiration date, e.g. 132, 400857"""
+        """find a USAB number and expiration date, e.g. 132, 400857
+        integer and string are returned
+        """
         i = self.findbyname(name)
         if len(i) > 0:
             return (i[0][0],i[0][16])
@@ -739,7 +743,36 @@ class Registration(object):
                 
         if out!=sys.stdout:
             out.close()
+
+    def list1_email(self,out=sys.stdout):
+        """list of all players and their events.
+        Optionally a filename can be given, defaults to screen"""
+        n = 0
+        if out!=sys.stdout:
+            out=open(out,"w")
+        out.write("Status: %s\n" % self.ctime)
+        out.write("%s\n" % "Participants: ");
+        for player in self.players:
+            n = n + 1
+            name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
+            events = ""
+            sex = player['sex']
+            email = player['email']
+            k=0
+            for cat in self.cat:
+                for event in ['ms','ws','md','wd','xd']:
+                    key = event+'-'+cat
+                    if player.has_key(key):
+                        events = events + " " + key
+                        k = k + 1
+            for i in range(k,4):
+                events = events + "     "
+            out.write("%3d: %-30s %s: %s    : %s\n" % (n,name,sex[0],events, email))
+                
+        if out!=sys.stdout:
+            out.close()
         
+                   
             
     def list2(self,u,out=sys.stdout):
         """list of all players, city, state and USAB number.. meant for the USAB"""
@@ -759,12 +792,14 @@ class Registration(object):
             uname = player['fname'] + ' ' + player['lname']
             (findu,exp) = u.findusabfromname(uname.upper())
             player['usab0'] = findu
+            # findu = int(findu)
             if usab>0 and findu>0 and usab==findu:
                 ngood=ngood + 1
                 star = "*"
             else:
                 star = " "
             out.write("%3d: %s %s :%s: %-10s : %-10s  %s\n" % (n,name,place,star,usab,findu,exp))
+            # print "DEBUG: %d %d %s" % (usab,findu,star)
         if out!=sys.stdout:
             out.close()
         
@@ -796,6 +831,7 @@ class Registration(object):
             out.write("%-15s, %-15s\n" % (player['lname'],player['fname']))
             out.write(" \n" )
             out.write("%s, %s\n" % (player['city'],player['state']))
+            out.write("");
             for line in player['entry']:
                 out.write("    %s\n" % line)
             for number in ['1','2','3','4','5']:
@@ -880,7 +916,6 @@ class Registration(object):
                 out.write("\"%s\"," % events[i][1])
             # out.write("\"%s\"," % player["event1"])            
             out.write("\"usa\"\n")
-            print player
         if out!=sys.stdout:
             out.close()
             
