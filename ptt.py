@@ -247,6 +247,7 @@ class Registration(object):
                     insert(player,words,'state',     'state')
                     insert(player,words,'zip',       'zip')
                     insert(player,words,'usabnum',   'usab')
+                    insert(player,words,'usab',      'usabmem')
                     insert(player,words,'cphone',    'cphone')
                     insert(player,words,'dphone',    'dphone')
                     insert(player,words,'ephone',    'ephone')
@@ -777,14 +778,21 @@ class Registration(object):
         
                    
             
-    def list1_money(self,out=sys.stdout):
+    def list1_money(self,out=sys.stdout,Qusab=False):
         """list of all players and their events.
         Optionally a filename can be given, defaults to screen"""
         n = 0
         if out!=sys.stdout:
             out=open(out,"w")
         out.write("Status: %s\n" % self.ctime)
-        out.write("%s\n" % "Participants: ");
+        if Qusab:
+            out.write("Participants:                     (state)sex  USAB0      USAB1      status      $$$\n");
+            #         .  1: Agavinate      , Guitar          (NY) f: 202341+    0          :   0 :
+        else:
+            out.write("Participants: \n");
+        sum1 = 0
+        sum2 = 0
+        sum3 = 0
         for player in self.players:
             n = n + 1
             name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
@@ -795,6 +803,7 @@ class Registration(object):
             usab  = player['usab']
             usab0 = player['usab0']
             usabfee = int(player['usabfee'])
+            usabmem = player['usabmem']
             k=0
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
@@ -808,8 +817,20 @@ class Registration(object):
             topay2=0
             if usab=="0":
                 topay2=25
-            out.write("%3d: %-30s %s: %s : %-10s %-10s : %3d : %3d - %3d - %3d  = %3d  \n" % (n,name,sex[0], events, usab,usab0, usabfee, dues,topay1,topay2,dues-topay1-topay2))
-                
+            out.write("%3d: %-30s %s:" % (n,name,sex[0]))
+            if not Qusab:
+                out.write(" %s :" % events)
+            out.write(" %-10s %-10s %-10s: %3d :" % (usab,usab0,usabmem,usabfee))
+            if not Qusab:
+                out.write(" %3d - %3d - %3d  = %3d  " % (dues,topay1,topay2,dues-topay1-topay2))
+            out.write("\n")
+            if usabfee > 0:
+                sum1 = sum1 + usabfee
+            sum2 = sum2 + dues
+        if Qusab:
+            out.write("===\n TOTAL USAB sum=%d\n" % sum1)
+        else:
+            out.write("===\n TOTAL sum=%d        USAB sum=%d  TOURNEY sum=%d\n" % (sum2,sum1,sum2-sum1))
         if out!=sys.stdout:
             out.close()
         
@@ -877,8 +898,8 @@ class Registration(object):
             out.write("%s, %s\n" % (player['city'],player['state']))
             usab  = player['usab']
             usab0 = player['usab0']
-            dues = int(player['dues'])
             usabfee = int(player['usabfee'])
+            dues = int(player['dues'])
             usabexp = player['usabexp']
             out.write("USAB: %s   Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
             out.write("\n");
@@ -911,7 +932,38 @@ class Registration(object):
             out.write("______________  \n\n");
             for line in player['entry']:
                 out.write("    %s\n" % line)
-            out.write("_____________________________________________________________\n\n");
+            out.write("_____________________________________________________________\n\n")
+            
+        if out!=sys.stdout:
+            out.close()
+        
+    def list4usab(self,out=sys.stdout):
+        """Registration list for new/renewing USAB members
+        """
+        if out!=sys.stdout:
+            out=open(out,"w")
+        count = 0
+        for player in self.players:
+            usabfee = int(player['usabfee'])
+            if usabfee == 0: continue
+            count = count + 1
+            out.write("%-15s, %-15s                             %d\n" % (player['lname'],player['fname'],count))
+            out.write("%s\n" % (player['address']))
+            out.write("%s, %s\n" % (player['city'],player['state']))
+            out.write("C-phone: %s   D-phone: %s  E-phone: %s\n" % (player['cphone'],player['dphone'],player['ephone']))
+            out.write("Email: %s\n" % player['email'])
+            out.write("Sex: %s\n" % player['sex'])
+            usab  = player['usab']
+            usab0 = player['usab0']
+            dues = int(player['dues'])
+            usabexp = player['usabexp']
+            usabmem = player['usabmem']
+
+            out.write("USAB: %s   Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
+            out.write("\n");
+
+            out.write("USAB fee: %d    (%s)\n" % (usabfee,usabmem))
+            out.write("_____________________________________________________________\n\n")
             
         if out!=sys.stdout:
             out.close()
