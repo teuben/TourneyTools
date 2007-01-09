@@ -191,7 +191,7 @@ class Registration(object):
             if words[0] == keyform and len(words[1])>0:
                 event[key] = words[1]
         self.filename = file
-        self.cat = ['A', 'B', 'S']
+        self.cat = ['A', 'C', 'S', 'U']
         self.players = []
         self.reset()
         f = open(file,'r')
@@ -729,10 +729,18 @@ class Registration(object):
                     key = event+'-'+cat
                     if player.has_key(key):
                         events = events + " " + key
+                        # check for REQ
+                        if event == 'xd':
+                            key1='xp-'+cat
+                        else:
+                            key1='dp-'+cat
+                        if player.has_key(key1):
+                            if player[key1] == "REQ" or player[key1] == "TBA":
+                                events = events + " (" + player[key1] + ")"
             out.write("%3d: %-30s %s: %s\n" % (n,name,sex[0],events))
         if missing:
             if len(self.missing) > 0:
-                out.write("===Missing players:\n");
+                out.write("===Missing and/or mis-spelled players:\n");
                 old = ""
                 count = 0
                 for i in self.missing:
@@ -742,7 +750,7 @@ class Registration(object):
                     old = i
                     print ""
             else:
-                out.write("===No missing players yet:\n");
+                out.write("===Not checked for missing players yet:\n");
                 
                 
         if out!=sys.stdout:
