@@ -17,6 +17,8 @@
 #     not very good (in non-=debug mode) in finding mis-registered accross events
 #     not very good in detecting multiple event1='s
 #     under the pressure of MIDA time, lots of horrible things added last days
+#     REQ also can show up for singles in output
+#     cannot have 2 the same names.... infamous Wei Wang dcopen06
 
 ptt_version = "$Revision$  $Date$"
 
@@ -33,7 +35,7 @@ class Eopen(object):
     def close(self):
         self.fd.close()
 
-class USAB(object):
+class USAB1(object):
     """Manage a USAB list. Currently the format contains the following columns,
     that can be accessed by the array self.players[]:
      0 'MemberID',
@@ -53,6 +55,7 @@ class USAB(object):
     14 'DOB',
     15 'Club', 
     16 'EXP'
+    Used for MidAtlantic 2006
     """
    
     def __init__(self,filename):
@@ -124,6 +127,97 @@ class USAB(object):
         return (0,0)
             
             
+class USAB2(object):
+    """Manage a USAB2 list. Currently the format contains the following columns,
+    0 FIRST_NAME,
+    1 LAST_NAME,
+    2 LABEL,
+    3 TYPE,
+    4 NUMBER,
+    5 EXP,
+    6 ADDRESS_1,
+    7 ADDRESS_2,
+    8 CITY,
+    9 STATE,
+    10 ZIP,
+    11 BIRTHDATE
+    Used for DC Open 2007
+    """
+   
+    def __init__(self,filename):
+        self.filename = filename
+        fd = open(filename,'r')
+        self.lines=fd.readlines()
+        fd.close()
+        print "Read %d lines from %s" % (len(self.lines),filename)
+        self.players=[]
+        count = 0
+        for l in self.lines:
+            p = l.strip()
+            if count==0:
+                self.id=p.split(',')
+                print "Header:",self.id
+            else:
+                id = p.split(',')
+                if len(id[4]) > 0:
+                    id[4] = int(id[4])
+                else:
+                    # bad empty USAB's
+                    # print id
+                    id[4] = 0
+                self.players.append(id)
+                while len(id) < 17:
+                    id.append(" ")
+            count = count + 1
+    def count(self):
+        print len(self.players)
+    def findbyname(self,name):
+        """enter a name, first or last name
+        Note names must be all in upper case
+        """
+        names = name.split()
+        found=[]
+        if len(names)==3:
+            fname=names[0] + ' ' + names[1]
+            lname=names[2]
+            for i in self.players:
+                if fname==i[0] and lname==i[1]:
+                    found.append(i)
+        elif len(names)==2:
+            for i in self.players:
+                if names[0]==i[0] and names[1]==i[1]:
+                    found.append(i)
+        elif len(names)==1:
+            for i in self.players:
+                if names[0]==i[1]:
+                    found.append(i)
+            for i in self.players:
+                if names[0]==i[0]:
+                    found.append(i)
+        else:
+            print "Cannot find names like : ",name
+        if len(found) > 1:
+            all = []
+            for i in found:
+                print "%s %s" % (i[0],i[1])
+            return []
+        return found
+    def findbyusab(self,usab):
+        """enter a USAB number, e.g. 132, 400857"""
+        for i in self.players:
+            if usab==i[4]:
+                return i
+        return []
+    def findusabfromname(self,name):
+        """find a USAB number and expiration date, e.g. 132, 400857
+        integer and string are returned
+        """
+        i = self.findbyname(name)
+        if len(i) > 0:
+            return (i[0][4],i[0][5])
+        return (0,0)
+            
+            
         
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
@@ -183,7 +277,7 @@ class Registration(object):
     # --------------------------------------------------------------------------------
     
     def parse5(self,file):
-        """parser for MIDA 2006 """
+        """parser for MIDA 2006, DCOPEN 2007 """
         def insert(player,words,keyform,key):
             if words[0] == keyform:
                 player[key] = words[1].strip()
@@ -239,6 +333,7 @@ class Registration(object):
                 if inside:
                     if words[0] != 'BEGIN':
                         raw.append(line)
+                    #                    file        internal
                     insert(player,words,'fname',     'fname')
                     insert(player,words,'lname',     'lname')
                     insert(player,words,'sex',       'sex')
@@ -252,9 +347,10 @@ class Registration(object):
                     insert(player,words,'dphone',    'dphone')
                     insert(player,words,'ephone',    'ephone')
                     insert(player,words,'email',     'email')
-                    insert(player,words,'dues',      'dues')
+                    insert(player,words,'paid',      'dues')
+                    insert(player,words,'latefee',   'latefee')
                     insert(player,words,'usabfee',   'usabfee')
-                    # search for 6 events (though they can't play 6 of course)
+                    # search for up to 6 events (though they can't play 6 of course)
                     for number in ['1','2','3','4','5', '6']:
                         for thing in ['event', 'partner']:
                             key   = thing+number
@@ -844,8 +940,39 @@ class Registration(object):
         
                    
             
+    def list2_1(self,u,out=sys.stdout):
+        """list of all players, city, state and USAB number.. meant for the USAB1"""
+        n = 0
+        ngood = 0
+        if out!=sys.stdout:
+            out=open(out,"w")
+        out.write("Participants and USAB membership: \n");
+        for player in self.players:
+            n = n + 1
+            city='???'
+            usab='?'
+            if player.has_key('city'): city = player['city']
+            if player.has_key('usab'): usab = player['usab']
+            name = "%-15s, %-15s " % (player['lname'],player['fname'])
+            place = "%-20s %2s" % (city,player['state'])
+            uname = player['fname'] + ' ' + player['lname']
+            (findu,exp) = u.findusabfromname(uname.upper())
+            player['usabexp'] = exp
+            player['usab0'] = findu
+            # findu = int(findu)
+            if usab>0 and findu>0 and usab==findu:
+                ngood=ngood + 1
+                star = "*"
+            else:
+                star = " "
+            out.write("%3d: %s %s :%s: %-10s : %-10s  %s\n" % (n,name,place,star,usab,findu,exp))
+            # print "DEBUG: %d %d %s" % (usab,findu,star)
+        if out!=sys.stdout:
+            out.close()
+        
+            
     def list2(self,u,out=sys.stdout):
-        """list of all players, city, state and USAB number.. meant for the USAB"""
+        """list of all players, city, state and USAB number.. meant for the USAB2"""
         n = 0
         ngood = 0
         if out!=sys.stdout:
@@ -902,15 +1029,17 @@ class Registration(object):
             out.write("%-15s, %-15s" % (player['lname'],player['fname']))
             out.write("                                   %s\n" % player['lname'])
             out.write("---------------  ---------------\n");
-            out.write("%s\n" % (player['address']))
-            out.write("%s, %s\n" % (player['city'],player['state']))
+            out.write("Address:      %s\n" % (player['address']))
+            out.write("City,State:   %s, %s\n" % (player['city'],player['state']))
             usab  = player['usab']
             usab0 = player['usab0']
             usabfee = int(player['usabfee'])
             dues = int(player['dues'])
+            latefee = int(player['latefee'])
             usabexp = player['usabexp']
-            out.write("USAB: %s   Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
+            out.write("USAB#: Given:  %s       Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
             out.write("\n");
+            out.write("Events:");
 
             k=0
             for cat in self.cat:
@@ -933,9 +1062,12 @@ class Registration(object):
                 topay2=25
 
             out.write("\n");
-            out.write("Paid:     %d\n" % dues)
+            out.write("Paid:     %d " % dues)
+            if dues==0 and latefee==0:
+                out.write("        (Adding $5 late fee for no payment present yet)\n")
+                latefee = 5
             out.write("USAB fee: %d\n" % usabfee)
-            out.write("Due:      %d    =   %d (paid) - %d (entry) - %d (usab)\n" % (dues-topay1-topay2,dues,topay1,topay2))
+            out.write("Due:      %d    =   %d (entry) + %d (usab) + %d (late) - %d (paid)\n" % (topay1+topay2+latefee-dues,topay1,topay2,latefee,dues))
 
             out.write("______________  \n\n");
             for line in player['entry']:
@@ -1167,7 +1299,10 @@ class Registration(object):
                         if s1 == s2:
                             state = s1
                         else:
-                            state = s1+'/'+s2
+                            if mixed and sex=='m':
+                                state = s1+'/'+s2
+                            else:
+                                state = s2+'/'+s1
                         # the next line should be the final and only line for printout in the final correct version
                         # the others are all for debugging and otherwise "should never happen" if all is well in the db
                         if mixed and sex=='m':
@@ -1176,6 +1311,8 @@ class Registration(object):
                             s = "%s / %s %s (%s)" % (partner,player['fname'],player['lname'],state)
                         print "%2d:: %s" % (n,s)
                         ev.write("%s\n" % s)
+                    if not debug and partner2 == '???':
+                        print "### Missing partner"
                 else:
                     if debug:
                         print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
