@@ -1,3 +1,5 @@
+' based on: http://www.oooforum.org/forum/viewtopic.phtml?t=15402
+' install this in your OpenOffice macro repository
 Private cFileIN As String
 Private cFileOut As String
 Private cDstType As String
