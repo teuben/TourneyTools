@@ -1,0 +1,54 @@
+#! /bin/csh -f
+#
+#
+#   if you install 'vfb' in linux, you can get rid of flashy windows
+#   or else use some options in the macro to make the function not do it
+# See also:
+#   http://www.xml.com/lpt/a/1638
+
+if ($#argv == 0) then
+  echo Usage: $0 dirName
+  echo "   dirName should be a directory in which there are cvs files."
+  exit 0
+endif
+
+set dir=$1
+
+if (! -d $dir) then
+  echo $dir must be a directory name
+  exit 1
+endif
+
+if (0) then
+set c1=`echo $dir | cut -c1`
+if ($c1 != '/') then
+  echo $dir must be an absolute directory name
+  exit 1
+endif
+endif
+
+set all=`(cd $dir; ls *csv)`
+if ($#all == 0) then
+  echo no csv files in $dir
+  exit 0
+else
+  echo Transforming all $#all csv files in $dir
+  echo $all
+endif
+
+set xvfb=/usr/bin/Xvfb-bad
+
+if (-e $xvfb) then
+  echo Lucky you...
+  nohup $xvfb :25 -screen scrn 800x600x32 & 
+  set display=(-display :25)
+else
+  echo Xvfb not installed.... you have to endure the flashing windows now
+  set display=()
+endif
+
+oowriter -invisible -headless "macro:///Standard.Module1.CSV2XLS($dir)" $display
+
+if (-e $xvfb) then
+  /usr/bin/killall  $xvfb:t
+endif
