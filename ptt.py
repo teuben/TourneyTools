@@ -20,6 +20,7 @@
 #     REQ also can show up for singles in output
 #     cannot have 2 the same names.... infamous Wei Wang dcopen06
 #     fix if $$ is 20.00, has to be integer
+#     doesn't deal with person A and B that both signed up with C
 
 ptt_version = "$Revision$  $Date$"
 
@@ -404,7 +405,7 @@ class Registration(object):
     # --------------------------------------------------------------------------------
     
     def parse5(self,file):
-        """parser for MIDA 2006, DCOPEN 2007, MIDA 2007, DCOPEN 2008"""
+        """parser for MIDA 2006, DCOPEN 2007, MIDA 2007, DCOPEN 2008, DCOPEN 2009"""
         def insert(player,words,keyform,key):
             if words[0] == keyform:
                 player[key] = words[1].strip()
@@ -838,7 +839,7 @@ class Registration(object):
             elif p==2:
                 return (3*n)/2-2
             elif p==3:
-                return 0
+                return 2*n-4
         print ""
         print "Number of expected matches in tournament: %s" % self.filename
         print "Assuming elimination level %d" % p
@@ -1465,7 +1466,7 @@ class Registration(object):
         for player in self.players:
             if player.has_key(key):
                 n = n+1
-                print "%3d: %s %s (%s)" % (n,player['fname'],player['lname'],player['state'])
+                print "%3d: %s %s (%s) # %d" % (n,player['fname'],player['lname'],player['state'],player['id'])
                 if TPout:
                     ev.write("%s\n" % self.TP1(player))
                 else:
@@ -1503,7 +1504,8 @@ class Registration(object):
         # set this tag to 0 if we've not seen this person
         for player in self.players:
             player[0] = 0
-        needy_players = []
+        m_needy_players = []
+        f_needy_players = []
         if TPout:    # write a header for the CSV file
             ev.write(self.TP0())
         # loop over all players, and see if they play in "key"
@@ -1543,10 +1545,12 @@ class Registration(object):
                                 state = s2+'/'+s1
                         # the next line should be the final and only line for printout in the final correct version
                         # the others are all for debugging and otherwise "should never happen" if all is well in the db
+                        rank1 = player['id']
+                        rank2 = p1['id']
                         if mixed and sex=='m':
-                            s = "%s %s / %s (%s)" % (player['fname'],player['lname'],partner,state)
+                            s = "%s %s / %s (%s) # %d/%d" % (player['fname'],player['lname'],partner,state,rank1,rank2)
                         else:
-                            s = "%s / %s %s (%s)" % (partner,player['fname'],player['lname'],state)
+                            s = "%s / %s %s (%s) # %d/%d" % (partner,player['fname'],player['lname'],state,rank1,rank2)
                         print "%2d:: %s" % (n,s)
                         if TPout:
                             if mixed and sex=='m':
@@ -1574,16 +1578,19 @@ class Registration(object):
                             else:
                                 ev.write("%s\n" % s)
                     else:
-                        s = "%s %s (%s)" % (player['fname'],player['lname'],player['state'])
-                        needy_players.append(s)
+                        s = "%s %s (%s) # %d" % (player['fname'],player['lname'],player['state'],player['id'])
+                        if sex=='m':
+                            m_needy_players.append(s)
+                        else:
+                            f_needy_players.append(s)
                         if TPout:
                             ev.write("%s\n" % self.TP1(player))  
                             ev.write("%s\n" % self.TP1(0))
                         else:
                             ev.write("%-40s    **REQ**\n" % s)
-        if len(needy_players) > 0:
+        if len(m_needy_players)+len(f_needy_players) > 0:
             print "== Partners Requested in %s by: =============" % key
-            for np in needy_players:
+            for np in f_needy_players+m_needy_players:
                 print np
             print "============================================="
 
