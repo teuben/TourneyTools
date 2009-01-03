@@ -841,7 +841,7 @@ class Registration(object):
             elif p==3:
                 return 2*n-4
         print ""
-        print "Number of expected matches in tournament: %s" % self.filename
+        print "Number of expected paired up matches in tournament: %s" % self.filename
         print "Assuming elimination level %d" % p
         print "      ms   ws   md   wd   xd "
         # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
@@ -1475,7 +1475,7 @@ class Registration(object):
                 if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
         e=key[0:2]
         c=key[3:4]
-        self.sum[c][e] = n
+        self.sum[c][e]  = n
         ev.close()
 
     def partner_key(self,key):
@@ -1492,7 +1492,10 @@ class Registration(object):
         doubles(players,key1), e.g. doubles(p,'md-A')
         key:     md-XXX, wd-XXX, xd-XXX
         """
-        n = 0
+        n   = 0
+        n1f = 0
+        n1m = 0
+        n2  = 0
         ev = Eopen(key,TPout)
         need_sex = key[0]
         if key[0] == 'x':
@@ -1534,6 +1537,7 @@ class Registration(object):
                     if p1.has_key(key2): partner2 = p1[key2]
                     if debug: print "  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state'])
                     if show:
+                        n2 = n2 + 1
                         s1 = player['state']
                         s2 = p1['state']
                         if s1 == s2:
@@ -1569,6 +1573,7 @@ class Registration(object):
                         print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
                     if not request(partner):
                         self.missing.append(partner)
+                        n2 = n2 + 1
                         if not debug:
                             s = "%s %s / %s (%s) ** not reg ** " % (player['fname'],player['lname'],partner,player['state'])
                             print "%2d:: %s" % (n,s)
@@ -1581,8 +1586,10 @@ class Registration(object):
                         s = "%s %s (%s) # %d" % (player['fname'],player['lname'],player['state'],player['id'])
                         if sex=='m':
                             m_needy_players.append(s)
+                            n1m = n1m + 1
                         else:
                             f_needy_players.append(s)
+                            n1f = n1f + 1
                         if TPout:
                             ev.write("%s\n" % self.TP1(player))  
                             ev.write("%s\n" % self.TP1(0))
@@ -1596,7 +1603,10 @@ class Registration(object):
 
         e=key[0:2]
         c=key[3:]
-        self.sum[c][e] = n
+        if mixed:
+            self.sum[c][e] = n2 + min(n1m,n1f)
+        else:
+            self.sum[c][e] = n2 + max(n1m,n1f)/2
 
     def player2(self,fname,lname):
         for player in self.players:
