@@ -1,0 +1,274 @@
+\documentstyle{report}
+
+% \pagestyle{empty}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{2.5mm}
+
+%\setlength{\oddsidemargin}{0.5in}
+%\setlength{\evensidemargin}{0.5in}
+%\setlength{\textwidth}{8.5in}
+
+%\setlength{\topmargin}{0.0in}      % above Header
+%\setlength{\headheight}{0.0in}     % Header
+%\setlength{\headsep}{0.0in}        % between header and body
+%\setlength{\topskip}{0.0in}        % skip at top to first line of text
+%\setlength{\textheight}{11.0in}
+%\setlength{\fcootskip}{0.0in}      % size for Footer
+
+\begin{document}
+
+
+%\chapter{Mathematics, Combinatorics and Scheduling of a drop down  tournament}
+\begin{center}
+{\it Peter Teuben - draft 3-mar-2005}
+\end{center}
+
+\section{Tournament Software}
+
+\subsection*{makelist}
+
+Player records come into email (send by a web page when the player
+registers)
+as a database with signups for the various
+events, and their partners (or an REQ if they request a partner to be
+assigned.
+
+\subsection*{makedraw}
+
+This program follows IBF rules and places the players from a list
+produced by {\tt makelist} in a draw leaving
+byes in all the right places. The output is a draw.
+
+\subsection*{drawplot}
+
+This program takes the draw output from {\tt makedraw} and plots it
+up on the screen. The input is a simple ascii file in a particular format,
+and is currently edited with any standard editor to show the progression
+of the tournament.
+
+\section{Tournament Combinatorics and Scheduling}
+
+Let us start with a single drop-down draw of $N$ 
+players\footnote{for sake of simplicity, number of players and
+courts will be  powers of 2, typically 4, 8, 16, 32, 64}. 
+We will consider four common drop-down formats:
+
+\begin{enumerate}
+\item
+Single elimination. If you loose, you are out of the draw. 
+Each player will only be guaranteed 1 match in this format.
+\newline
+This format is also known as ``{\bf A}''.
+
+\item
+Double elimination: two draws, A and B, 
+where the B contains all first round loosers from the main (A) bracket.
+Each player will be guaranteed a minimum of 2 matches.
+If you loose after that, you can go home.
+\newline
+This format is also known as ``{\bf A/B}''.
+
+\item
+Double elimination single draw, A.
+Only the top half of a draw is populated. All
+first round loosers are fed back into the A in the next round, but
+in the lower half of the draw. This is a variation on the 
+double elimination {\bf A/B} scheme whereby the winner of B plays 
+agains the winner of A in the true finals.
+Each player will be guaranteed a minimum of 2 matches.
+If you loose after that, you can go home. It also ensures that
+with a bad draw where two strong players play each other in the
+first round, the looser gets another chance for finals in the
+bottom half draw.
+\newline
+This format is also known as ``{\bf A2}''.
+
+
+
+\item
+Triple elimination: four draws, A, B, C and D. The C draw 
+contains all first
+round loosers in A, the B contains all second round loosers in A, and the 
+D contains all first round loosers in C. 
+Each player will be guaranteed a minimum of 3 matches.
+If you loose after that, you are done for the day.
+\newline
+This format is known as ``{\bf A/B/C/D}''.
+
+
+\item
+Two double elimination: four draws, A, B, C and D, but half the
+players have been put in the A, half the players in the C draw
+already.
+The B contains all first round loosers in A, and the 
+D contains all first round loosers in C. 
+Each player will be now guaranteed a minimum of 2 matches. It is
+a special case of 2.
+\newline
+This format is known as ``{\bf AB+CD}''.
+
+
+\end{enumerate}
+
+Now, for these three formats, let us compute some basic numbers
+like the number of matches played, the number of rounds needed
+to finish the draw, etc. They are summarized in table~\ref{basic}
+
+\newpage
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|r||r|r|r|r|r|}
+\hline
+format:           &       A                 &         A/B     &   A/B/C/D     & AB+CD    & A2 \\
+                   & Single                 &  Double          & Triple       & Double   & Double \\
+\hline
+
+draw entries & $2N-1$            &      $ 3N-2$        &  $ 4N-4 $    &  $ 3N-4 $  & $3N-1$ \\
+
+&&&&&\\
+
+tot. matches        & $N-1$                &    ${ 3N/2}$ - 2 &  $2N-4 $ & ${3N/2}-4$ & $3N/2-1$ \\
+
+&&&&&\\
+
+% first round matches & $N \over 2$             &  $N \over 2$ & $N \over 2$ \\
+1st rnd. matches & $N/2$             &  $N/2$ & $N/2$ & $N/2$ & $N/2$ \\
+
+&&&&&\\
+
+time slices   & $\log_2(N)$  & 
+                $\log_2{( {N/2} )} + 1$  & 
+                $\log_2{( {N/4} )} + 2$  &
+		$2\log_2{( {N/4} )} + 2$ &
+		$\log_2{( {N} )} + 1$  \\
+&&&&&\\
+
+\hline
+
+\end{tabular}
+\caption{Basic numbers for N players in a single event draw 
+in various drop-down formats}
+\label{basic}
+\end{center}
+\end{table}
+
+Now let us extend this to compute how many matches are needed for
+a full tournament. This time we assume that for given $N$ players,
+half of them ($N/2$) will be male, and half female. Also, they all
+nice pair up in doubles and mixed events. So, there will be
+$N/2$ players in both singles (MS and WS), 
+$N/4$ teams in both doubles (MD, WD), and 
+$N/2$ teams in mixed (XD). Using the numbers computed in table~\ref{basic}
+we then find the following results, as summarized in 
+table~\ref{full}
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|r|rrrrr|}
+\hline
+        &   A  &    A/B   &   A/B/C/D  & AB+CD &  A2 \\
+        & Single  &  Double   & Triple  & Double & Double \\
+\hline
+
+Players &&&&&\\
+  N     &  2N-5      &  3N-10  &      4N-20   & 3N-20  &  3N-5 \\
+4       &   3       &   -       &        -      & - &  \\
+8      &    11      &   14      &       -      & -  &  \\
+16      &   27      &   38     &        44     & 28 & \\
+32      &   59      &   86     &        108    & 76  & \\
+64      &   123     &   182     &       236    & 172  & \\
+128      &  251     &   374     &       492    & 364  & \\
+&&&&&\\
+Courts &&&&&\\
+         &   N/2    &  N/2        &     N/2  &  & \\
+
+\hline
+
+\end{tabular}
+\caption{Basic numbers for a full
+5-event (MS,WS,MD,WD,XD) tournament with N/2 men and N/2
+women, filled draws, 3 events per player.}
+\label{full}
+\end{center}
+\end{table}
+
+\newpage
+
+\section{Scheduling on limited courts}
+
+
+The above derivations all assume that there are plenty of courts to 
+put all matches on court when they can be played. Of course in reality
+this is not the case. For a simple draw of $N$ players, one needs
+$N/2$ courts. So, let us assume there are only $C$ courts
+\footnote{again we are assuming $C$ is a power of 2},
+where $C$ will often be less than $N/2$. 
+The number of timeslices (rounds of full courts if you wish)
+needed to finish a single elimination A draw
+of $N$ players can be shown to be:
+$$
+	\log_2{N} + \sum_{i=1}^{ {N} \over {4C} }{ (2^i - 1)}
+	\eqno{N \ge 4C}
+$$
+where the last summation term is only needed when the number of courts
+is not sufficient to place all first rounds on court at the same time, 
+{\it i.e.} ($N \ge 4C$). Using the well known formula 
+$$
+	\sum_{k=0}^{n} x^k = {  {x^{n+1} - 1} \over {x-1} }
+$$
+we then obtain
+$$
+	\log_2{N} + 2^{ {{N} \over {4C}} + 1} +  { {N} \over {4C} }  -  2
+	\eqno{N \ge 4C}
+$$
+
+%  { {N} \over {4C} }
+
+which for a few common cases are computed in Table~\ref{timing} below.
+
+\begin{table}[h]
+\begin{center}
+\begin{tabular}{|r|rrrrrrr|}
+
+\hline
+~~~~$N$   &   2   &   4   &   8   &   16  &   32 &    64  &  128 \\
+
+C~~~~~~ & & & & & & & \\
+
+\hline
+
+1       &   1   &   3   &   7   &   15  &   31  &   63  &   127  \\
+2       &   1   &   2   &   4   &   8   &   16  &   32   &  64   \\
+4       &   1   &   2   &   3   &   5   &   9   &   17   & 33    \\
+8       &   1   &   2   &   3   &   4   &   6   &   10   & 18   \\
+16      &   1   &   2   &   3   &   4   &   5   &   7  &  11    \\
+32      &   1   &   2   &   3   &   4   &   5   &   6  &  8   \\
+\hline
+\end{tabular}
+\caption{Scheduling: number of timeslices needed for given
+number of players (N) and number of courts (C)}
+\end{center}
+\label{timing}
+\end{table}
+
+We can expand this formula for a double elimination A/B,
+
+$$
+        2\log_2{N/2} + 2^{ {{N} \over {8C}} + 2} +  { {3N} \over {4C} }  -  4
+	\eqno{N \ge 8C}
+$$
+
+and triple elimination A/B/C/D format,
+
+$$
+        4\log_2{N/4} + 2^{ {{N} \over {16C}} + 3} +  { {3N} \over {4C} }  -  8
+	\eqno{N \ge 16C}
+$$
+
+
+
+
+
+\end{document}
