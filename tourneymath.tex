@@ -21,7 +21,7 @@
 
 %\chapter{Mathematics, Combinatorics and Scheduling of a drop down  tournament}
 \begin{center}
-{\it Peter Teuben - draft 28-oct-99}
+{\it Peter Teuben - draft 21-aug-00}
 \end{center}
 
 \section*{Tournament Combinatorics and Scheduling}
@@ -33,7 +33,7 @@
 Let us start with a single drop-down draw of $N$ 
 players\footnote{for sake of simplicity, number of players and
 courts will be  powers of 2, typically 4, 8, 16, 32, 64}. 
-We will consider three common drop-down formats:
+We will consider four common drop-down formats:
 
 \begin{enumerate}
 \item
@@ -59,6 +59,20 @@ Each player will be guaranteed a minimum of 3 matches.
 If you loose after that, you are done for the day.
 \newline
 This format is known as ``{\bf A/B/C/D}''.
+
+
+\item
+Two double elimination: four draws, A, B, C and D, but half the
+players have been put in the A, half the players in the C draw
+already.
+The B contains all first round loosers in A, and the 
+D contains all first round loosers in C. 
+Each player will be now guaranteed a minimum of 2 matches. It is
+a special case of 2.
+\newline
+This format is known as ``{\bf AB+CD}''.
+
+
 \end{enumerate}
 
 Now, for these three formats, let us compute some basic numbers
@@ -69,30 +83,31 @@ to finish the draw, etc. They are summarized in table~\ref{basic}
 
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{|r||r|r|r|}
+\begin{tabular}{|r||r|r|r|r|}
 \hline
-format:           &       A                 &         A/B     &   A/B/C/D \\
-                   & Single                 &  Double          & Triple  \\
+format:           &       A                 &         A/B     &   A/B/C/D     & AB+CD\\
+                   & Single                 &  Double          & Triple       & Double \\
 \hline
 
-entries in the draw & $2N-1$            &      $ 3N-2$        &  $ 4N-4 $    \\
+entries in the draw & $2N-1$            &      $ 3N-2$        &  $ 4N-4 $    &  $ 3N-4 $ \\
 
-&&&\\
+&&&&\\
 
-total number of matches        & $N-1$                &    ${ 3N/2}$ - 2 &  $2N-4 $ \\
+total number of matches        & $N-1$                &    ${ 3N/2}$ - 2 &  $2N-4 $ & ${3N/2}-4$ \\
 
-&&&\\
+&&&&\\
 
 % first round matches & $N \over 2$             &  $N \over 2$ & $N \over 2$ \\
-first round matches & $N/2$             &  $N/2$ & $N/2$ \\
+first round matches & $N/2$             &  $N/2$ & $N/2$ & $N/2$ \\
 
-&&&\\
+&&&&\\
 
 time slices for scheduling  & $\log_2(N)$  & 
                 $\log_2{( {N/2} )} + 1$  & 
-                $\log_2{( {N/4} )} + 2$  \\
+                $\log_2{( {N/4} )} + 2$  &
+		$2\log_2{( {N/4} )} + 2$  \\
 
-&&&\\
+&&&&\\
 
 \hline
 
@@ -115,20 +130,20 @@ table~\ref{full}
 
 \begin{table}[h]
 \begin{center}
-\begin{tabular}{|r|rrr|}
+\begin{tabular}{|r|rrrr|}
 \hline
-        &   A  &    A/B   &   A/B/C/D  \\
-        & Single  &  Double   & Triple  \\
+        &   A  &    A/B   &   A/B/C/D  & AB+CD \\
+        & Single  &  Double   & Triple  & Double \\
 \hline
 
 Players &&&\\
-  N     &  2N-5      &  3N-10  &      4N-20    \\
-4       &   3       &   -       &        -      \\
-8      &    11      &   14      &       -      \\
-16      &   27      &   38     &        44      \\
-32      &   59      &   86     &        108      \\
-64      &   123     &   182     &       236      \\
-128      &  251     &   374     &       492      \\
+  N     &  2N-5      &  3N-10  &      4N-20   & 3N-20  \\
+4       &   3       &   -       &        -      & - \\
+8      &    11      &   14      &       -      & -  \\
+16      &   27      &   38     &        44     & 28 \\
+32      &   59      &   86     &        108    & 76  \\
+64      &   123     &   182     &       236    & 172  \\
+128      &  251     &   374     &       492    & 364  \\
 &&&\\
 Courts &&&\\
          &   N/2    &  N/2        &     N/2  \\
