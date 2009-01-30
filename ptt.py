@@ -21,6 +21,10 @@
 #     cannot have 2 the same names.... infamous Wei Wang dcopen06
 #     fix if $$ is 20.00, has to be integer
 #     doesn't deal with person A and B that both signed up with C
+#     money defintions are in too many routines, so when changed, not same
+#        so needs to be normalized
+#     players_money needs an option to allow forcing +30 if no USAB1, but for final USAB0 sufficient
+#        this way we do conservative at registration,but relaxed name fit for USAB/final report
 
 ptt_version = "$Revision$  $Date$"
 
@@ -345,6 +349,101 @@ class USAB2(object):
         return (0,0)
             
             
+class USAB3(object):
+    """Manage a USAB list. Currently the format contains the following columns,
+    that can be accessed by the array self.players[]:
+    0  LastName         1
+    1  <nothing>
+    2  FirstName        2
+    3  MiddleInitial	3
+    4  Comp	
+    5  Date Of Birth	14
+    6  USAB #	        0
+    7  Sex	        13
+    8  Address1	        4
+    9  Address2	        5
+    10  City	        6
+    11 State	        7
+    12 Zip	          8
+    13 Expiration Date    16
+    Used for DC Open 2009 - new database , but extracted still?
+
+    ---old---
+     0 'MemberID',         1 'Name',     2 'Firstname',     3 'Middlename',     4 'Address',     5 'Address2',     6 'City',
+     7 'State',            8 'Postalcode',     9 'Country',    10 'PhoneHome',    11 'PhoneWork',    12 'Email',    13 'Gender',
+    14 'DOB',    15 'Club',     16 'EXP'
+
+    """
+   
+    def __init__(self,filename):
+        self.filename = filename
+        fd = open(filename,'r')
+        self.lines=fd.readlines()
+        fd.close()
+        print "Read %d lines from %s" % (len(self.lines),filename)
+        self.players=[]
+        count = 0
+        for l in self.lines:
+            p = l.strip().upper()
+            if count==0:
+                self.id=p.split('\t')
+                print "Header:",self.id
+            else:
+                id = p.split('\t')
+                id[6] = int(id[6])
+                while len(id) < 17:
+                    id.append(" ")
+                self.players.append(id)
+            count = count + 1
+    def count(self):
+        print len(self.players)
+    def findbyname(self,name):
+        """enter a name, first or last name
+        Note names must be all in upper case
+        """
+        names = name.split()
+        found=[]
+        if len(names)==3:
+            fname=names[0] + ' ' + names[1]
+            lname=names[2]
+            for i in self.players:
+                if fname==i[2] and lname==i[0]:
+                    found.append(i)
+        elif len(names)==2:
+            for i in self.players:
+                if names[0]==i[2] and names[1]==i[0]:
+                    found.append(i)
+        elif len(names)==1:
+            for i in self.players:
+                if names[0]==i[0]:
+                    found.append(i)
+            for i in self.players:
+                if names[0]==i[2]:
+                    found.append(i)
+        else:
+            print "Cannot find names like : ",name
+        if len(found) > 1:
+            all = []
+            for i in found:
+                print "%s %s" % (i[2],i[1])
+            return []
+        return found
+    def findbyusab(self,usab):
+        """enter a USAB number, e.g. 132, 400857"""
+        for i in self.players:
+            if usab==i[6]:
+                return i
+        return []
+    def findusabfromname(self,name):
+        """find a USAB number and expiration date, e.g. 132, 400857
+        integer and string are returned
+        """
+        i = self.findbyname(name)
+        if len(i) > 0:
+            return (i[0][6],i[0][13])
+        return (0,0)
+            
+            
         
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
@@ -486,6 +585,7 @@ class Registration(object):
                     insert(player,words,'dphone',    'dphone')
                     insert(player,words,'ephone',    'ephone')
                     insert(player,words,'email',     'email')
+                    insert(player,words,'club',      'club')
                     insert(player,words,'paid',      'dues')
                     insert(player,words,'consent',   'consent')
                     insert(player,words,'latefee',   'latefee')
@@ -1051,6 +1151,8 @@ class Registration(object):
         sum1 = 0
         sum2 = 0
         sum3 = 0
+        sum4p = 0
+        sum4n = 0
         for player in self.players:
             n = n + 1
             name = "%-15s, %-15s (%3s)" % (player['lname'],player['fname'],player['state'])
@@ -1059,6 +1161,7 @@ class Registration(object):
             email = player['email']
             dues = int(player['dues'])
             #dues = 0
+            # 'usab0' is the one from the USAB database, 'usab' is the one the player claimed
             usab  = player['usab']
             usab0 = player['usab0']
             usabexp = player['usabexp']
@@ -1066,6 +1169,7 @@ class Registration(object):
             usabmem = player['usabmem']
             latefee = int(player['latefee'])
             usabcomment = player['usabcomment']
+            club = player['club']
             k=0
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
@@ -1082,16 +1186,15 @@ class Registration(object):
             else:
                 topay1=0
             topay2=0
-            if usab=="0" or usab[0]=='-':
+            if usab0=="0" or usab0 == 0:
                 if usabfee > 0:
                     topay2=usabfee
                 else:
-                    topay2=30
-            if usab0=="0" or usab[0]=='+':
-                if usabfee > 0:
-                    topay2=usabfee
-                else:
-                    topay2=30
+                    if len(player['uinfo']) == 0:
+                        topay2 = 30
+                    else:
+                        topay2 = 0
+                if k==0: topay2=0
             if usabfee > 0:
                 topay2 = usabfee
             out.write("%3d: %-30s %s:" % (n,name,sex[0]))
@@ -1102,6 +1205,8 @@ class Registration(object):
                 out.write(" %s" % usabcomment)
             else:
                 out.write(" %3d - %3d - %3d - %3d = %3d  " % (dues,topay1,topay2,latefee,dues-topay1-topay2-latefee))
+            if not Qusab:
+                out.write(" %s" % club)
             out.write("\n")
             # FIGURE THIS OUT
             # sum1 = sum1 + topay2
@@ -1109,10 +1214,16 @@ class Registration(object):
                sum1 = sum1 + usabfee
             sum2 = sum2 + dues
             sum3 = sum3 + latefee
+            d = dues-topay1-topay2-latefee
+            if d>0:
+                sum4p = sum4p + d
+            else:
+                sum4n = sum4n - d
         if Qusab:
             out.write("===\n TOTAL USAB sum=%d\n" % sum1)
         else:
-            out.write("===\n TOTAL sum=%d        USAB sum=%d  TOURNEY sum=%d LATE=%d\n" % (sum2,sum1,sum2-sum1,sum3))
+            out.write("===\n TOTAL sum_dues=%d     USAB sum=%d  TOURNEY sum=%d LATE=%d\n" % (sum2,sum1,sum2-sum1,sum3))
+            out.write(" TOTAL sum4p=%d   sum4n=%d \n" % (sum4p,sum4n))
         if out!=sys.stdout:
             out.close()
         
@@ -1159,22 +1270,36 @@ class Registration(object):
         for player in self.players:
             n = n + 1
             city='???'
-            usab='?'
             if player.has_key('city'): city = player['city']
-            if player.has_key('usab'): usab = player['usab']
+            if player.has_key('usab'): 
+                usab = player['usab']
+                u_info = u.findbyusab(int(usab))
+                if len(u_info) > 0:
+                    uplayer = u_info[2] + ' ' + u_info[0] 
+                else:
+                    uplayer = ' '
+            else:
+                usab = '?'
+                u_info = []
+                uplayer = ' '
+                
+
+                
             name = "%-15s, %-15s " % (player['lname'],player['fname'])
             place = "%-20s %2s" % (city,player['state'])
             uname = player['fname'] + ' ' + player['lname']
             (findu,exp) = u.findusabfromname(uname.upper())
             player['usabexp'] = exp
             player['usab0'] = findu
+            player['uinfo'] = u_info
+
             # findu = int(findu)
             if usab>0 and findu>0 and usab==findu:
                 ngood=ngood + 1
                 star = "*"
             else:
                 star = " "
-            out.write("%3d: %s %s :%s: %-10s : %-10s  %s\n" % (n,name,place,star,usab,findu,exp))
+            out.write("%3d: %s %s :%s: %-10s : %-10s  %s  [%s]\n" % (n,name,place,star,usab,findu,exp,uplayer))
             # print "DEBUG: %d %d %s" % (usab,findu,star)
         if out!=sys.stdout:
             out.close()
@@ -1235,19 +1360,19 @@ class Registration(object):
                         else:
                             out.write("%s\n" % key)
             # DCOPEN: 5+20k   MIDA:   25*k
-            topay1=5+20*k
+            if k>0:
+                topay1=5+20*k
+            else:
+                topay1=0
             #topay1=25*k
             topay2=0
-            if usab=="0" or usab[0]=='-':
+            if usab0=="0" or usab0 == 0:
                 if usabfee > 0:
                     topay2=usabfee
                 else:
                     topay2=30
-            if usab0=="0" or usab[0]=='+':
-                if usabfee > 0:
-                    topay2=usabfee
-                else:
-                    topay2=30
+            if usabfee > 0:
+                topay2 = usabfee
             out.write("\n");
             out.write("Paid:     %d " % dues)
             if dues==0 and latefee==0:
@@ -1255,6 +1380,7 @@ class Registration(object):
                 latefee = 5
             out.write("USAB fee: %d\n" % usabfee)
             out.write("Due:      %d    =   %d (entry) + %d (usab) + %d (late) - %d (paid)\n" % (topay1+topay2+latefee-dues,topay1,topay2,latefee,dues))
+            out.write("Consent:  %s\n"  % player['consent'])
 
             out.write("______________  \n\n");
             for line in player['entry']:
