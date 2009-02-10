@@ -32,6 +32,99 @@ Also, PTT puts the male first in mixed doubles, these are IBF
 requirements.
 
 
+WORKFLOW
+========
+
+1) create a new tournament
+   Tournament ->New
+
+2) Add properties
+   Under 'Events', add (or pick) events. No size of the draw is needed
+   yet, and the events can also be imported from another tournament.
+   E.g. if you are 
+
+3) Now for each event in the Roster do the following:
+
+   Draw->Add Draw
+   	     select Elimination, ->Next
+	     Select size (2,4,8,16,32,...), confirm name, etc. -> Next
+	     Select 'First Match' (3rd bullet) -> Next
+	     Select columns 'MemberID' and 'State' for the layout -> Next
+	     Finish
+
+	     at this stage these events still have 0 entries of course
+
+
+4) Now foreach event you the enter the players:
+
+   Player->Import Entries
+          ->Browse ; to your XLS file
+	  ->next
+	  (the default fields should be correct, but check on your first import)
+	  <HIT ->NEXT a few time until you have to select the Event
+
+	  select the event you want to have this imported to.
+	  IF THIS IS A DOUBLES EVENT, MAKE SURE YOU ALSO CHECK OFF THE 
+	  'Link partners in odd and even rows'
+	  on the lower left of the entry form.
+
+	  ->Finish
+
+	  if you now click on the Entries tab of this draw, you should see the newly
+	  imported players
+
+	  Now proceed and double click on the players/teams that are to be seeded
+	  There is a "Seed:" entry for this once the 'Entry properties' are open.
+	  -> OK
+	  repeat this for 1, 2, 3/4 and 5/8.  since there are no Shadow-Seed options
+	  for this program, the next level of 3/4, 5/8, 9/16 .... will have to be used
+
+	  I don't see an option to rank by state.
+     
+    Draw->Make Draw
+
+    	  select 'Separation' by 'State' in one of the selections that will come up
+	  
+	  look at the draw, if not happy, try 'Re-make Draw' or go ->Back and try
+	  something else....
+
+
+
+5) It is also possible to manually modify a draw, as follows:
+
+   From the left 'Draws' click on a draw and on the right you'll see the draw 
+   Suppose A and B need to be swapped, do this:
+
+   	   highlight A, right click, Delete Entry  (entry is actually put aside for later re-entry)
+	   highlight B, right click, Delete Entry
+	   highlight the spot where A was, right click, Select Entry
+	   	     now select B, and OK this
+	   highlight the spot where B was, right click, Select Entry
+	   	     now select A, and OK this
+   
+
+
+
+Reminder of color codes the draws will have:
+
+	 grey - nothing done, event just exists, nothing else
+	        next step would be "Draw->Add Draw"
+	 orange - after draw was added (size and elimination type given)
+	 	next step would be "Player->Import entries"
+		then "Draw->Make Draw"
+	 yellow - after entries added and draws made
+
+	 red - something bad, e.g. players important but no
+	 green - all done?
+
+
+
+
+	  
+
+	 
+
+
 CURRENT FLAWS:
 =============
 
