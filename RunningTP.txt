@@ -1,0 +1,42 @@
+Some notes on Using BTP with PTT  (Peter's Tourney Tools)
+=========================================================
+
+The TourneyTools are able to take a players registration list (the
+emails that contains "keyword=value" pairs) into the various text files
+for preparing registration and import into TP. We've used a variety
+of formats  for a number of years now (dcopen, njopen, mida and also
+Koshy's format from the PA website).
+
+For each event, which we normally call something like "ms-A", it will
+produce a ms-A.list file as well as a ms-A.csv (comma separated value)
+file. Sadly, TP does not like the latter one, so they need to be
+transformed into excel (.xls) files to automate the import into TP.
+
+Luckily there is a tool to do this automatically in OpenOffice, see
+the csv2xls shell script.
+
+It's quite possible you can also do this on a windows box, or mac, 
+but my current experience is solely with linux.
+
+The XLS files can be imported into TP once you have established a
+tournament, and you have created events and told it the size (16 or 32
+or even 64teams). There is somewhere in the 2nd or 3rd pulldown at the
+top an IMPORT action   <<gotta get better description of this>>
+
+One comment on singles vs. doubles: for doubles a pair is defined by
+two consquetive lines, e.g. line 1 and 2 are the first pair, line 3
+and 4 are the 2nd pair etc.  When you import this XLS file it is thus
+very important to click on that button in the lower left to "link up
+pairs" (or whatever it's called), otherwise you'll have a big mess.
+Also, PTT puts the male first in mixed doubles, these are IBF
+requirements.
+
+
+CURRENT FLAWS:
+=============
+
+TourneyTools doesn't use USAB numbers, but defines a uniq player ID which we
+use during the tournament. They are 1 .. number_of_players in the tournament,
+and for other reasons are defined by when they registered (1 being the first,
+N being the last). Sometimes comes in handy if you have to give preference
+based on this rank.
