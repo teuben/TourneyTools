@@ -70,3 +70,9 @@ after which you can run it as follows:
 % seniors.py > log1
 
 the output from the script has been redirected to a file called 'log1'
+
+
+
+For CVS/XLS check out also:
+http://www.linuxjournal.com/content/convert-spreadsheets-csv-files-python-and-pyuno
+http://www.linuxjournal.com/content/convert-spreadsheets-csv-files-python-and-pyuno-part-2
