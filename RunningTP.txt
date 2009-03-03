@@ -119,10 +119,9 @@ Reminder of color codes the draws will have:
 
 
 
-
+6) Now that your have all entries in the draws, you can setup the times to play, 
+   the courts, the gyms, order or play etc.etc.   Outside the current scope.
 	  
-
-	 
 
 
 CURRENT FLAWS:
