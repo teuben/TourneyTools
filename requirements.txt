@@ -1,0 +1,169 @@
+A badminton tournament will consist of 3 stages:
+===============================================
+1) registration of the players in their events - covered below
+2) making the draws (this includes selection of seeds by an indedendant
+   referee/committee)     - not covered here
+3) running the tournament - not covered here
+
+Just to get some numbers down; regarding item 2, the draws, we
+typically have the following sizes: we have N players (say 200), which
+play 3 out of 5 events (singles, double and/or mixed doubles) in any
+of K levels (e.g. A,B,C,D).  The tournament will thus typically have
+around 20 events, organized in a matrix of (say) 4 levels (A,B,C,D)
+and 5 categories (MS, WS, MD, WD, XD).
+
+
+
+1) The Registration 
+
+
+At the first stage of a (badminton) tournament we register all
+players, in singles and (mixed) doubles events, and extract various
+registration lists and events lists for further processing.
+
+For each player three sets of information are obtained:
+
+1. Personal (first, nick and lastname, address, age, gender, etc.etc.)
+   and if the player is associated with a group (for later money processing
+   it is handy to group players from a college).
+
+2. USAB - their membership number and level of membership (junior,
+   tournament, full member)
+   For those not a member yet, they have to become a member and choose
+   the membership level and for how many years (currently: 1, 3 or 5)
+
+3. Events - choose between singles, doubles and mixed doubles in a variety
+   of levels (many names possible: A,B,C, Senior, Master, U11, U13, U15 etc.)
+   In some way the events form a matrix, where there are 5 rows:
+   Men Single (MS), Women Single (WS), Men Double (MD), Women Double (WD)
+   and Mixed Double (XD).
+   For junior players they change "Men" -> "Boy" and "Women" to "Girl".
+   The columns are the different levels.
+   The levels could be small (e.g. A,B,C,D) or large (a senior nationals
+   will run 35+, 40+, 45+, 50+, etc.etc. until they run out of people,
+   which often it is 80+ the oldest age group).
+   For juniors it is normally in 2 year increments: U9, U11, U13, U15, U17,
+   U19, U21., but they sometimes grab ages together in some of the categories,
+   resulting in a matrix that is not filled.
+
+   There are often some restrictions on how many events a player can play.
+   a few common examples:
+   There is the simple 'max 3 event' rule.
+   You can play in a particular event in A, but then
+   you cannot play in B for that event. But for another event (e.g. doubles) 
+   you could switch to another level. So a player could play singles in A, but doubles
+   in B. But, to complicate matters, for other events you can play the same,
+   e.g. you could play  singles
+   in A or B, and also play singles in Seniors.  See example of DCOPEN.
+   For the Juniors you can play "up", i.e. if you are 11, you cannot play
+   in U11, but you can play in U13 and U15 etc.
+   For seniors you cannot play down, e.g. if you are 45, you can play in
+   45+, but not in 50+, but you can play in 40+ and in 35+.
+
+   As part of the "event" registration, there are sometimes simple ancillary
+   items that players need to register for as well:
+
+   - a t-shirt and an accociated size
+   - a dinner ticket, and maybe veggie/chicken/beef style selection
+
+   All of these will items have some price accociated with it. There ia a 
+   basic price for the entry (sometimes even 0), and per event, per t-shirt, per 
+   dinner there are going to be prices set for those.
+
+
+   And to cover all bases, an generic comment form where they can leave things
+   like:
+   - i wish to be picked up from the airport
+   - previous tournament results the tourney people should know about
+   - i will not arrive until 7.30pm on friday night
+
+
+
+There are simple static-web form examples of this here:
+
+
+http://bima.astro.umd.edu/dcopen/register09.html
+http://bima.astro.umd.edu/~teuben/badminton/mida/register09.html	(old)
+http://www.astro.umd.edu/~teuben/badminton/seniors/form.html
+http://www.astro.umd.edu/~teuben/badminton/mdjo/register09f.html
+
+
+Here are some 'actions' that during the registration should be considered:
+
+- both players in a doubles or mixed doubles event need to be registered
+  for their entry to be valid.
+  Players need to be warned if their partner hasn't registered, or if the
+  partner signed up in another event  by accident (more common than you
+  would like to think).
+  Or if the partner is not found, it is possible that the partner misspelled
+  the players name. hence our idea of First Name , Nick Name and Last Name.
+
+
+  Common example in badminton: asian players often have shorter or americanized
+  name, which we store as the Nick Name:
+  fname=Balusubramanian		nname=Balu	(shorter version for Indians)
+  fname=Wai Hong		nname=Henrik	(english name for Chinese)
+
+  so, fuzzy name search is important.
+
+  Another common one is
+
+
+  	  Shaw Ree
+	  Shawree
+	  Shaw-Ree
+
+- There are two exceptions where a player does not need to give the name of a
+  partner:
+
+  REQ - player is requesting a partner, to be resolved in stage 2 
+  (but the user interface of the registration program could be providing
+   a pulldown to select that player from the pool of players in an event
+   that has requested a partner)
+  TBA - To Be Announced, player is flagged and needs to provide partner name later
+
+- as a player registers his USAB info needs to be verified. Again,
+  fuzzy name search is important. He needs to be warned if not found
+  and autoamtically some default amount for (re)newed membership is
+  added to the fees unless player can show a form at the tournament
+  that testifies his proper membership.
+
+
+- During the registration the program needs to keep a record (via
+  time) when the information was added, as sometimes an event list grows
+  beyond capacity and a wait list is needed which is used to get new
+  entries from as people retract from the tournament.
+  It is also importsnt to remember that an entry is not valid until
+  both players have entered.
+
+  
+
+Temporary Stage 2 preparation
+=============================
+Once all this information has been gathered, and checked (name spelling,
+USAB membership, correct partnering of players both ways) we basically
+are ready to create players lists. 
+By now there ought to be no REQ and TBA's left.
+
+This means for all singles events a list of players (e.g. alphabetical or
+by order of registration) and for all (mixed) doubles a list of the 
+two-player teams.
+
+For singles:
+    fname (nname, if different) lname (state)
+    ...
+For (mixed) doubles:
+    fname1 (nname1) lname1 / fname2 (nname2) lname2 (state1/state2)
+    ...
+
+- if state1 and state2 same, only one is needed
+- for mixed doubles, the male needs to be listed first
+
+
+Example registration lists are a spreadsheet like summary of player, events
+played, money received/due, USAB membership, etc. We
+normally create a single 8.5x11 registration sheet per player that has
+all their info on it for checking at the registration desk before they
+play and go on court. Examples available upon request.
+
+
