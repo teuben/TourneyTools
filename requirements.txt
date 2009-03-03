@@ -166,4 +166,13 @@ normally create a single 8.5x11 registration sheet per player that has
 all their info on it for checking at the registration desk before they
 play and go on court. Examples available upon request.
 
+Implementation issues
+=====================
 
+Normally the stage-1 registration would run on a server where players
+can access it through a website. It is important the code be portable
+to a linux or mac environment, meaning no code references to C:\, or use
+C# or ASP.  I would prefer there be a proof of concept of this, instead
+of a "left as excersize for the reader". In order for the badminton club
+to make use of this, we cannot rely on an off-site website where we cannot
+tune to registration parameters or have no access to the code.
