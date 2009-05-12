@@ -176,3 +176,13 @@ C# or ASP.  I would prefer there be a proof of concept of this, instead
 of a "left as excersize for the reader". In order for the badminton club
 to make use of this, we cannot rely on an off-site website where we cannot
 tune to registration parameters or have no access to the code.
+
+
+Current example code is available in python.
+
+
+Other Ideas
+===========
+
+- partner finding tool:  the REQ allowed in a partner name could have a 
+  special function
