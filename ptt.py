@@ -1027,6 +1027,17 @@ class Registration(object):
             return 0
         self.players.sort(cmpfunc)
 
+    def sort2(self):
+        """Sort players by their waiting list"""
+        def cmpfunc(a,b):
+            name_a = a['lname'] + ' ' + a['fname'] 
+            name_b = b['lname'] + ' ' + b['fname'] 
+            if name_a == name_b: return 0
+            if name_a <  name_b: return -1
+            if name_a >  name_b: return 1
+            return 0
+        self.players.sort(cmpfunc)
+
     def show1(self,name):
         """find a player. you can give just the first name, last name, or both."""
         p = self.player1(name)
@@ -1555,6 +1566,41 @@ class Registration(object):
         else:
             self.singles(key,debug,TPout)
 
+    def wlistall(self,debug=False):
+        """loop over all events in the tournament with waitlisting
+        to do just one, use list(event)
+        """
+        self.missing=[]
+        for cat in self.cat:
+            for event in ['ms','ws','md','wd','xd']:
+                key = event+'-'+cat
+                print "Event:: %s" % key
+                self.wlist(key,debug)
+        print "=== Missing entries from: "
+        self.missing.sort()
+        old = ""
+        count = 0
+        for i in self.missing:
+            if i != old:
+                count = count + 1
+                print "%3d: %s" % (count,i)
+            old = i
+        print ""
+        np = len(self.players)
+        print "Expecting a total of %d + %d = %d players" % (np,count,np+count)
+            
+
+    def wlist(self,key,debug=False):
+        """list a single event
+        key:    ms-XXX, ws-XXX, md-XXX, wd-XXX, xd-XXX
+        debug:  useful before making the lists
+        TPout:  useful if CSV lists are needed
+        """
+        if key[1] == 'd':
+            self.wdoubles(key,debug)
+        else:
+            self.wsingles(key,debug)
+
     def bad_sex(self,sex,need_sex):
         """check genders
         sex:       'm' or 'f'
@@ -1597,6 +1643,27 @@ class Registration(object):
                     ev.write("%s\n" % self.TP1(player))
                 else:
                     ev.write("%s %s (%s)\n" % (player['fname'],player['lname'],player['state']))
+                sex = player['sex'][0]
+                if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
+        e=key[0:2]
+        c=key[3:4]
+        self.sum[c][e]  = n
+        ev.close()
+
+    def wsingles(self,key,debug=True):
+        """created a list of a singles entries for wait listing
+        singles(players,key), e.g.  singles(p,'ms-A')
+        key:  ms-XXX
+              ws-XXX
+        """
+        n = 0
+        need_sex = key[0]
+        ev = Eopen(key,False)
+        for player in self.players:
+            if player.has_key(key):
+                n = n+1
+                print "%3d: %s %s (%s) # %d" % (n,player['fname'],player['lname'],player['state'],player['id'])
+                ev.write("%s %s (%s)\n" % (player['fname'],player['lname'],player['state']))
                 sex = player['sex'][0]
                 if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
         e=key[0:2]
@@ -1721,6 +1788,109 @@ class Registration(object):
                             ev.write("%s\n" % self.TP1(0))
                         else:
                             ev.write("%-40s    **REQ**\n" % s)
+        if len(m_needy_players)+len(f_needy_players) > 0:
+            print "== Partners Requested in %s by: =============" % key
+            for np in f_needy_players+m_needy_players:
+                print np
+            print "============================================="
+
+        e=key[0:2]
+        c=key[3:]
+        if mixed:
+            self.sum[c][e] = n2 + min(n1m,n1f)
+        else:
+            self.sum[c][e] = n2 + max(n1m,n1f)/2
+
+    def wdoubles(self,key,debug=True):
+        """created a list of a doubles entries for the waitlist
+        doubles(players,key1), e.g. doubles(p,'md-A')
+        key:     md-XXX, wd-XXX, xd-XXX
+        """
+        n   = 0
+        n1f = 0
+        n1m = 0
+        n2  = 0
+        ev = Eopen(key,False)
+        need_sex = key[0]
+        if key[0] == 'x':
+            mixed = True
+            key2 = 'xp-' + key[3:]
+        else:
+            mixed = False
+            key2 = 'dp-' + key[3:]
+        # set this tag to 0 if we've not seen this person
+        for player in self.players:
+            player[0] = 0
+        m_needy_players = []
+        f_needy_players = []
+        # loop over all players, and see if they play in "key"
+        for player in self.players:
+            if player.has_key(key):
+                sex = player['sex'][0]
+                if not mixed and self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex)
+                if player[0] == 0:
+                    n = n+1
+                    show = 1
+                else:
+                    show = 0
+                player[0] = 1                
+                partner = '???'
+                if player.has_key(key2): partner = player[key2]
+                if debug:
+                    if show:
+                        print "%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner)
+                    else:
+                        print  "  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner)
+                p1 = self.player1(partner)
+                if len(p1):
+                    # partner found
+                    p1[0] = 1
+                    partner2 = '???'
+                    if p1.has_key(key2): partner2 = p1[key2]
+                    if debug: print "  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state'])
+                    if show:
+                        n2 = n2 + 1
+                        s1 = player['state']
+                        s2 = p1['state']
+                        if s1 == s2:
+                            state = s1
+                        else:
+                            if mixed and sex=='m':
+                                state = s1+'/'+s2
+                            else:
+                                state = s2+'/'+s1
+                        # the next line should be the final and only line for printout in the final correct version
+                        # the others are all for debugging and otherwise "should never happen" if all is well in the db
+                        rank1 = player['id']
+                        rank2 = p1['id']
+                        if mixed and sex=='m':
+                            s = "%s %s / %s (%s) # %d/%d" % (player['fname'],player['lname'],partner,state,rank1,rank2)
+                        else:
+                            s = "%s / %s %s (%s) # %d/%d" % (partner,player['fname'],player['lname'],state,rank1,rank2)
+                        print "%2d:: %s" % (n,s)
+                        ev.write("%s\n" % s)
+                    if not debug and partner2 == '???':
+                        print "### Missing partner (usually entered in different event)"
+                else:
+                    # partner not found
+                    if debug:
+                        print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
+                    if not request(partner):
+                        self.missing.append(partner)
+                        n2 = n2 + 1
+                        if not debug:
+                            s = "%s %s / %s (%s) ** not reg ** " % (player['fname'],player['lname'],partner,player['state'])
+                            print "%2d:: %s" % (n,s)
+                            ev.write("%s\n" % s)
+                    else:
+                        s = "%s %s (%s) # %d" % (player['fname'],player['lname'],player['state'],player['id'])
+                        if sex=='m':
+                            m_needy_players.append(s)
+                            n1m = n1m + 1
+                        else:
+                            f_needy_players.append(s)
+                            n1f = n1f + 1
+                        ev.write("%-40s    **REQ**\n" % s)
         if len(m_needy_players)+len(f_needy_players) > 0:
             print "== Partners Requested in %s by: =============" % key
             for np in f_needy_players+m_needy_players:
