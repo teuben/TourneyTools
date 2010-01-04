@@ -1314,8 +1314,25 @@ class Registration(object):
             # print "DEBUG: %d %d %s" % (usab,findu,star)
         if out!=sys.stdout:
             out.close()
-        
-            
+
+    def email(self,efile,subject):
+        for player in self.players:
+            fname = player['fname']
+            lname = player['lname']
+            email = player['email']
+            if len(email) > 0:
+                f1 = open(efile)
+                f0 = open('email.tmp','w')
+                f0.write("Dear %s %s \n    (or person responsible for his/her entry):" % (fname,lname))
+                for line in f1.readlines():
+                    f0.write(line)
+                for line in player['entry']:
+                    f0.write("%s\n" % line)
+                f0.close()
+                print "%s" % email
+                subject1 = "%s %s %s" % (subject,player['fname'],player['lname'])
+                print "%s" % subject1
+
     def list3(self,out=sys.stdout,verbose=True):
         """list of all players, and their emails"""
         if out!=sys.stdout:
@@ -1535,6 +1552,7 @@ class Registration(object):
         """loop over all events in the tournament and list them.
         to do just one, use list(event)
         """
+        print "=== LISTALL: "
         self.missing=[]
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
@@ -1570,10 +1588,14 @@ class Registration(object):
         """loop over all events in the tournament with waitlisting
         to do just one, use list(event)
         """
+        print "=== WLISTALL: "
         self.missing=[]
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
                 key = event+'-'+cat
+                print "Event:: %s" % key
+                self.wlist(key,debug)
+                key = event+'-'+cat+'w'
                 print "Event:: %s" % key
                 self.wlist(key,debug)
         print "=== Missing entries from: "
@@ -1655,20 +1677,25 @@ class Registration(object):
         singles(players,key), e.g.  singles(p,'ms-A')
         key:  ms-XXX
               ws-XXX
+              "MemberID","Name","Firstname","State"
         """
-        n = 0
-        need_sex = key[0]
-        ev = Eopen(key,False)
+        def sortwsingles(a,b):
+            if a[1]<b[1]: return -1
+            if a[1]>b[1]: return  1
+            if a[1]==b[1]: return 0
+        lout=[]
+        TPout=True
+        ev = Eopen(key,TPout)
         for player in self.players:
             if player.has_key(key):
-                n = n+1
-                print "%3d: %s %s (%s) # %d" % (n,player['fname'],player['lname'],player['state'],player['id'])
-                ev.write("%s %s (%s)\n" % (player['fname'],player['lname'],player['state']))
-                sex = player['sex'][0]
-                if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
-        e=key[0:2]
-        c=key[3:4]
-        self.sum[c][e]  = n
+                sout = "%s %s (%s) # %d" % (player['fname'],player['lname'],player['state'],player['id'])
+                lout.append((sout,player['id']))
+        lout.sort(sortwsingles)
+        n = 0
+        for l in lout:
+            n = n + 1
+            print "%3d: %s" % (n,l[0])
+            ev.write("%s\n" % l[0])
         ev.close()
 
     def partner_key(self,key):
@@ -1806,11 +1833,21 @@ class Registration(object):
         doubles(players,key1), e.g. doubles(p,'md-A')
         key:     md-XXX, wd-XXX, xd-XXX
         """
+        def sortwdoubles(a,b):
+            """ (s,r1,r2) """
+            def max(x,y):
+                if x>y: return x
+                return y
+            ra = max(a[1],a[2])
+            rb = max(b[1],b[2])
+            if ra < rb : return -1
+            if ra > rb : return  1
+            if ra == rb: return  0
+        lout=[]
         n   = 0
         n1f = 0
         n1m = 0
         n2  = 0
-        ev = Eopen(key,False)
         need_sex = key[0]
         if key[0] == 'x':
             mixed = True
@@ -1867,8 +1904,7 @@ class Registration(object):
                             s = "%s %s / %s (%s) # %d/%d" % (player['fname'],player['lname'],partner,state,rank1,rank2)
                         else:
                             s = "%s / %s %s (%s) # %d/%d" % (partner,player['fname'],player['lname'],state,rank1,rank2)
-                        print "%2d:: %s" % (n,s)
-                        ev.write("%s\n" % s)
+                        lout.append((s,rank1,rank2))
                     if not debug and partner2 == '???':
                         print "### Missing partner (usually entered in different event)"
                 else:
@@ -1880,8 +1916,7 @@ class Registration(object):
                         n2 = n2 + 1
                         if not debug:
                             s = "%s %s / %s (%s) ** not reg ** " % (player['fname'],player['lname'],partner,player['state'])
-                            print "%2d:: %s" % (n,s)
-                            ev.write("%s\n" % s)
+                            lout.append((s,999,999))
                     else:
                         s = "%s %s (%s) # %d" % (player['fname'],player['lname'],player['state'],player['id'])
                         if sex=='m':
@@ -1890,19 +1925,17 @@ class Registration(object):
                         else:
                             f_needy_players.append(s)
                             n1f = n1f + 1
-                        ev.write("%-40s    **REQ**\n" % s)
+                        # print "%-40s    **REQ**" % s
+        lout.sort(sortwdoubles)
+        n = 0
+        for l in lout:
+            n = n + 1
+            print "%3d: %s" % (n,l[0])
         if len(m_needy_players)+len(f_needy_players) > 0:
             print "== Partners Requested in %s by: =============" % key
             for np in f_needy_players+m_needy_players:
                 print np
             print "============================================="
-
-        e=key[0:2]
-        c=key[3:]
-        if mixed:
-            self.sum[c][e] = n2 + min(n1m,n1f)
-        else:
-            self.sum[c][e] = n2 + max(n1m,n1f)/2
 
     def player2(self,fname,lname):
         for player in self.players:
