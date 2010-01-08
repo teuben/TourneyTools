@@ -444,6 +444,97 @@ class USAB3(object):
         return (0,0)
             
             
+class USAB4(object):
+    """Manage a USAB/NGB list. 
+       Currently the format contains the following columns,
+       that can be accessed by the array self.players[]:
+    0  LastName         
+    1  FirstName        
+    2  MiddleInitial	
+    8  Date Of Birth	
+    12 NGB # (USAB)     
+    13 Sex	        
+    15 Address1	        
+    17 City	        
+    18 State	        
+    19 Zip	        
+    24 Expiration Date  
+    Used for DC Open 2010 - new RailStation database 
+
+    """
+   
+    def __init__(self,filename):
+        self.filename = filename
+        fd = open(filename,'r')
+        self.lines=fd.readlines()
+        fd.close()
+        print "Read %d lines from %s" % (len(self.lines),filename)
+        self.players=[]
+        count = 0
+        for l in self.lines:
+            p = l.strip().upper()
+            if count==0:
+                self.id=p.split('\t')
+                print "Header:",self.id
+            else:
+                id = p.split('\t')
+                if len(id[12]) > 0:
+                    id[12] = int(id[12])
+                else:
+                    id[12] = 0
+                # while len(id) < 17:
+                #    id.append(" ")
+                self.players.append(id)
+            count = count + 1
+    def count(self):
+        print len(self.players)
+    def findbyname(self,name):
+        """enter a name, first or last name
+        Note names must be all in upper case
+        """
+        names = name.split()
+        found=[]
+        if len(names)==3:
+            fname=names[0] + ' ' + names[1]
+            lname=names[2]
+            for i in self.players:
+                if fname==i[2] and lname==i[0]:
+                    found.append(i)
+        elif len(names)==2:
+            for i in self.players:
+                if names[0]==i[2] and names[1]==i[0]:
+                    found.append(i)
+        elif len(names)==1:
+            for i in self.players:
+                if names[0]==i[0]:
+                    found.append(i)
+            for i in self.players:
+                if names[0]==i[2]:
+                    found.append(i)
+        else:
+            print "Cannot find names like : ",name
+        if len(found) > 1:
+            all = []
+            for i in found:
+                print "%s %s" % (i[2],i[1])
+            return []
+        return found
+    def findbyusab(self,usab):
+        """enter a USAB number, e.g. 132, 400857"""
+        for i in self.players:
+            if usab==i[12]:
+                return i
+        return []
+    def findusabfromname(self,name):
+        """find a USAB number and expiration date, e.g. 132, 400857
+        integer and string are returned
+        """
+        i = self.findbyname(name)
+        if len(i) > 0:
+            return (i[0][12],i[0][24])
+        return (0,0)
+            
+            
         
 class Registration(object):
     """Registration starts from an email folder that contains some kind of
@@ -587,6 +678,7 @@ class Registration(object):
                     insert(player,words,'email',     'email')
                     insert(player,words,'club',      'club')
                     insert(player,words,'paid',      'dues')
+                    insert(player,words,'tshirt',    'tshirt')
                     insert(player,words,'consent',   'consent')
                     insert(player,words,'latefee',   'latefee')
                     insert(player,words,'usabfee',   'usabfee')
@@ -1067,6 +1159,7 @@ class Registration(object):
             out=open(out,"w")
         out.write("Status: %s\n" % self.ctime)
         out.write("%s\n" % "Participants: ");
+        tshirt={}
         for player in self.players:
             n = n + 1
             name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
@@ -1086,6 +1179,18 @@ class Registration(object):
                             if request(player[key1]):
                                 events = events + " (" + player[key1] + ")"
             out.write("%3d: %-30s %s: %s\n" % (n,name,sex[0],events))
+            if len(events) > 0:
+                s = player['tshirt']
+                if tshirt.has_key(s):
+                    tshirt[s] = tshirt[s] + 1
+                else:
+                    tshirt[s] = 1
+        tsum = 0
+        print "T-shirt size count for all playing participants:"
+        for s in tshirt.keys():
+            tsum = tsum +tshirt[s] 
+            print "%-10s : %3d  %3d" % (s,tshirt[s],tsum)
+        print "------------------------------------------------"
         if missing:
             if len(self.missing) > 0:
                 out.write("===Missing and/or mis-spelled players:\n");
@@ -1315,11 +1420,12 @@ class Registration(object):
         if out!=sys.stdout:
             out.close()
 
-    def email(self,efile,subject):
+    def email(self,efile,subject,stop_id=0):
         for player in self.players:
             fname = player['fname']
             lname = player['lname']
             email = player['email']
+            my_id = player['id']
             if len(email) > 0:
                 f1 = open(efile)
                 f0 = open('email.tmp','w')
@@ -1329,9 +1435,16 @@ class Registration(object):
                 for line in player['entry']:
                     f0.write("%s\n" % line)
                 f0.close()
-                print "%s" % email
+                print "%d: %s" % (my_id,email)
                 subject1 = "%s %s %s" % (subject,player['fname'],player['lname'])
                 print "%s" % subject1
+                cmd = "mail -s \"%s\" %s < email.tmp" % (subject1,email)
+                print "CMD: ",cmd
+                time.sleep(0.2)
+                #os.system('ls -l email.tmp')
+                os.system(cmd)
+            if my_id == stop_id:
+                break
 
     def list3(self,out=sys.stdout,verbose=True):
         """list of all players, and their emails"""
