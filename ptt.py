@@ -495,21 +495,24 @@ class USAB4(object):
         names = name.split()
         found=[]
         if len(names)==3:
+            # example  "Peter J Teuben"
             fname=names[0] + ' ' + names[1]
             lname=names[2]
             for i in self.players:
-                if fname==i[2] and lname==i[0]:
+                if fname==i[1] and lname==i[0]:
                     found.append(i)
         elif len(names)==2:
+            # example: "Peter Teuben"
             for i in self.players:
-                if names[0]==i[2] and names[1]==i[0]:
+                if names[0]==i[1] and names[1]==i[0]:
                     found.append(i)
         elif len(names)==1:
+            # example:  "peter" or "teuben"
             for i in self.players:
                 if names[0]==i[0]:
                     found.append(i)
             for i in self.players:
-                if names[0]==i[2]:
+                if names[0]==i[1]:
                     found.append(i)
         else:
             print "Cannot find names like : ",name
@@ -521,6 +524,8 @@ class USAB4(object):
         return found
     def findbyusab(self,usab):
         """enter a USAB number, e.g. 132, 400857"""
+        if usab<0: return []
+        if usab==0: return []
         for i in self.players:
             if usab==i[12]:
                 return i
@@ -528,10 +533,11 @@ class USAB4(object):
     def findusabfromname(self,name):
         """find a USAB number and expiration date, e.g. 132, 400857
         integer and string are returned
+        2010 didn't have expiration , return blank space
         """
         i = self.findbyname(name)
         if len(i) > 0:
-            return (i[0][12],i[0][24])
+            return (i[0][12],'n/a')
         return (0,0)
             
             
@@ -626,6 +632,7 @@ class Registration(object):
                     event={}
                     raw=[]
                     player['id'] = cnt1
+                    player['drop'] = 0
                 if words[0] == 'END':
                     cnt2 = cnt2 + 1
                     inside = False
@@ -681,6 +688,7 @@ class Registration(object):
                     insert(player,words,'tshirt',    'tshirt')
                     insert(player,words,'consent',   'consent')
                     insert(player,words,'latefee',   'latefee')
+                    insert(player,words,'drop',      'drop')
                     insert(player,words,'usabfee',   'usabfee')
                     insert(player,words,'usabcomment',   'usabcomment')
                     # search for up to 6 events (though they can't play 6 of course)
@@ -1243,6 +1251,7 @@ class Registration(object):
         if out!=sys.stdout:
             out=open(out,"w")
         for player in self.players:
+            if player['drop'] != 0: continue
             n = n + 1
             name = "%s, %s (%s)" % (player['lname'],player['fname'],player['state'])
             out.write("%s\n" % name)
@@ -1256,11 +1265,13 @@ class Registration(object):
         """list of all players and their events.
         Optionally a filename can be given, defaults to screen"""
         n = 0
+        nu = 0
         if out!=sys.stdout:
             out=open(out,"w")
         out.write("Status: %s\n" % self.ctime)
         if Qusab:
-            out.write("Participants:                     (state)sex  USAB0      USAB1      status      $$$\n");
+            #out.write("Participants:                     (state)sex  USAB0      USAB1      status      $$$\n");
+            out.write("Participants:                       (state)sex USAB       status      $$$\n");
             #         .  1: Agavinate      , Guitar          (NY) f: 202341+    0          :   0 :
         else:
             out.write("Participants: \n");
@@ -1302,6 +1313,7 @@ class Registration(object):
             else:
                 topay1=0
             topay2=0
+            usab0 = -1
             if usab0=="0" or usab0 == 0:
                 if usabfee > 0:
                     topay2=usabfee
@@ -1313,10 +1325,14 @@ class Registration(object):
                 if k==0: topay2=0
             if usabfee > 0:
                 topay2 = usabfee
+            if Qusab and topay1==0 and topay2==0:
+                continue
+            nu = nu + 1
             out.write("%3d: %-30s %s:" % (n,name,sex[0]))
             if not Qusab:
                 out.write(" %s :" % events)
-            out.write(" %-10s %-10s %-10s %-10s: %3d :" % (usab,usab0,usabexp,usabmem,usabfee))
+            #out.write(" %-10s %-10s %-10s %-10s: %3d :" % (usab,usab0,usabexp,usabmem,usabfee))
+            out.write(" %-10s %-10s: %3d :" % (usab,usabmem,usabfee))
             if Qusab:
                 out.write(" %s" % usabcomment)
             else:
@@ -1337,6 +1353,7 @@ class Registration(object):
                 sum4n = sum4n - d
         if Qusab:
             out.write("===\n TOTAL USAB sum=%d\n" % sum1)
+            out.write(" TOTAL number of playing and paying: %d\n" % nu)
         else:
             out.write("===\n TOTAL sum_dues=%d     USAB sum=%d  TOURNEY sum=%d LATE=%d\n" % (sum2,sum1,sum2-sum1,sum3))
             out.write(" TOTAL sum4p=%d   sum4n=%d \n" % (sum4p,sum4n))
@@ -1351,7 +1368,7 @@ class Registration(object):
         ngood = 0
         if out!=sys.stdout:
             out=open(out,"w")
-        out.write("Participants and USAB membership: \n");
+        out.write("Participants and USAB membership: (list2_l)\n");
         for player in self.players:
             n = n + 1
             city='???'
@@ -1382,7 +1399,7 @@ class Registration(object):
         ngood = 0
         if out!=sys.stdout:
             out=open(out,"w")
-        out.write("Participants and USAB membership: \n");
+        out.write("Participants and USAB membership: (list2)\n");
         for player in self.players:
             n = n + 1
             city='???'
@@ -1391,13 +1408,14 @@ class Registration(object):
                 usab = player['usab']
                 u_info = u.findbyusab(int(usab))
                 if len(u_info) > 0:
-                    uplayer = u_info[2] + ' ' + u_info[0] 
+                    uplayer = u_info[1] + ' ' + u_info[0] 
                 else:
                     uplayer = ' '
             else:
                 usab = '?'
                 u_info = []
                 uplayer = ' '
+            player['uplayer'] = uplayer
                 
 
                 
@@ -1479,10 +1497,12 @@ class Registration(object):
             usab0 = player['usab0']
             usabfee = int(player['usabfee'])
             dues = int(player['dues'])
+            uplayer = player['uplayer']
             #dues = 0
             latefee = int(player['latefee'])
             usabexp = player['usabexp']
             out.write("USAB#: Given:  %s       Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
+            out.write("                        USAB name: %s\n" % uplayer)
             out.write("\n");
             out.write("Events:\n");
 
@@ -1519,6 +1539,7 @@ class Registration(object):
             if dues==0 and latefee==0:
                 out.write("        (Adding $5 late fee for no payment present yet)\n")
                 latefee = 5
+            out.write("              ")
             out.write("USAB fee: %d\n" % usabfee)
             out.write("Due:      %d    =   %d (entry) + %d (usab) + %d (late) - %d (paid)\n" % (topay1+topay2+latefee-dues,topay1,topay2,latefee,dues))
             out.write("Consent:  %s\n"  % player['consent'])
@@ -1526,7 +1547,11 @@ class Registration(object):
             out.write("______________  \n\n");
             for line in player['entry']:
                 out.write("    %s\n" % line)
-            out.write("_____________________________________________________________\n\n")
+            out.write("_____________________________________________________________\n")
+            out.write("\n")
+            out.write("Paid via:       cash / check / paypal / fully prepaid   (circle one, and list amount)\n\n")
+            out.write("Processed by:  ______ (initial here)\n")
+            out.write("")
             
         if out!=sys.stdout:
             out.close()
@@ -1553,11 +1578,13 @@ class Registration(object):
             #dues = 0
             usabexp = player['usabexp']
             usabmem = player['usabmem']
+            usabcomment = player['usabcomment']
 
             out.write("USAB: %s   Found:  %s   w/Exp: %s\n" % (usab,usab0,usabexp))
             out.write("\n");
 
             out.write("USAB fee: %d    (%s)\n" % (usabfee,usabmem))
+            out.write("Comment: %s\n" % usabcomment)
             out.write("_____________________________________________________________\n\n")
             
         if out!=sys.stdout:
@@ -1664,6 +1691,8 @@ class Registration(object):
     def listall(self,debug=False,csv=False):
         """loop over all events in the tournament and list them.
         to do just one, use list(event)
+        it also re-counts if a player has events, e.g. is not
+        on waiting list (when a 'w' is after the category)
         """
         print "=== LISTALL: "
         self.missing=[]
