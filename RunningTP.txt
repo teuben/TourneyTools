@@ -132,3 +132,9 @@ use during the tournament. They are 1 .. number_of_players in the tournament,
 and for other reasons are defined by when they registered (1 being the first,
 N being the last). Sometimes comes in handy if you have to give preference
 based on this rank.
+
+
+other tips:
+
+
+CutePDF is a good PDF writer for Windows
