@@ -1312,7 +1312,7 @@ class Registration(object):
                         events = events + " " + key
                         k = k + 1
             for i in range(k,3):
-                events = events + "     "
+                events = events + "       "
             # dcopen::topay1=5+20*k
             # mida::topay1=25*k
             # nc2010:10+20k
@@ -1485,6 +1485,35 @@ class Registration(object):
                         out.write('"%s" <%s>' % (name,email))
                     else:
                         out.write("   "+email+",")
+        if out!=sys.stdout:
+            out.close()
+
+    def list3club(self,out=sys.stdout,verbose=True):
+        """list of all players, and their club"""
+        if out!=sys.stdout:
+            out=open(out,"w")
+        for player in self.players:
+            state = player['state']
+            club = player['club']
+            name = "%s %s" % (player['fname'],player['lname'])
+            if verbose:
+                out.write('"%-30s"  %s  %s\n' % (name,state,club))
+            else:
+                out.write("   "+club+",")
+        if out!=sys.stdout:
+            out.close()
+
+    def list3clinic(self,out=sys.stdout,verbose=True):
+        """list of all players, and their club"""
+        if out!=sys.stdout:
+            out=open(out,"w")
+        n = 0
+        for player in self.players:
+            name = "%s %s" % (player['fname'],player['lname'])
+            clinic = player['clinic']
+            if clinic=='y':
+                n = n + 1
+                out.write('%-2d  %s\n' % (n,name))
         if out!=sys.stdout:
             out.close()
 
@@ -1881,7 +1910,7 @@ class Registration(object):
                 sex = player['sex'][0]
                 if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
         e=key[0:2]
-        c=key[3:4]
+        c=key[3:]
         self.sum[c][e]  = n
         ev.close()
 
