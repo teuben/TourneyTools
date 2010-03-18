@@ -639,6 +639,7 @@ class Registration(object):
                     raw=[]
                     player['id'] = cnt1
                     player['drop'] = 0
+                    player['tshirt'] = '0'
                 if words[0] == 'END':
                     cnt2 = cnt2 + 1
                     inside = False
@@ -1696,6 +1697,68 @@ class Registration(object):
         if out!=sys.stdout:
             out.close()
             
+    def list6(self,u,out=sys.stdout):
+        """Players list csv format for the TP program"""
+        def all_events(n,lines):
+            """lines is a set of lines that contain event1=, partner1=.... 3"""
+            out=[]
+            for i in range(n):
+                out.append(["",""])
+            for l in lines:
+                kv=l.split("=")
+                if kv[0]=="event1":
+                    out[0][0]=kv[1]
+                if kv[0]=="event2":
+                    out[1][0]=kv[1]
+                if kv[0]=="event3":
+                    out[2][0]=kv[1]
+                if kv[0]=="partner1":
+                    out[0][1]=kv[1]
+                if kv[0]=="partner2":
+                    out[1][1]=kv[1]
+                if kv[0]=="partner3":
+                    out[2][1]=kv[1]
+                    
+            return out
+        if out!=sys.stdout:
+            out=open(out,"w")
+        header=[]
+        header.append("MemberID")
+        header.append("Level1")
+        header.append("Level2")
+        header.append("Name")
+        header.append("Firstname")
+        header.append("Gender")
+        header.append("Address")
+        header.append("City")
+        header.append("State")
+        header.append("Postalcode")
+        header.append("Mobile")
+        header.append("PhoneWork")
+        header.append("PhoneHome")
+        header.append("Email")
+        for h in header:
+            out.write("\"%s\"," % h)
+        out.write("\n")
+        for player in self.players:
+            out.write("\"%s\"," % player["id"])
+            out.write("\"%s\"," % player["usab"])
+            out.write("\"%s\"," % player["usab0"])
+            out.write("\"%s\"," % player["lname"])
+            out.write("\"%s\"," % player["fname"])
+            out.write("\"%s\"," % player["sex"])
+            out.write("\"%s\"," % player["address"])
+            out.write("\"%s\"," % player["city"])
+            out.write("\"%s\"," % player["state"])
+            out.write("\"%s\"," % player["zip"])
+            out.write("\"%s\"," % player["cphone"])
+            out.write("\"%s\"," % player["dphone"])
+            out.write("\"%s\"," % player["ephone"])
+            out.write("\"%s\"," % player["email"])
+            out.write("\n")
+        if out!=sys.stdout:
+            out.close()
+                        
     def listall(self,debug=False,csv=False):
         """loop over all events in the tournament and list them.
         to do just one, use list(event)
