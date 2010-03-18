@@ -555,6 +555,7 @@ class Registration(object):
     n = Registration('njopen',3)          eric miller's old style (at least for njopen)
     m = Registration('mida',5)            pjt's new MIDA style
     
+    Optionally array of payments [30,20,20], which also means max 3 events
 
     A note on nomenclature:
     We enforce the use of the following abbreviations for the categories:   ms, ws, md, wd, xd (lower case!)
@@ -563,10 +564,15 @@ class Registration(object):
     The 'event' is then made up of a category and level, e.g.   'ms-S'
 
     """
-    def __init__(self,filename,method,cat):
+    def __init__(self,filename,method,cat,fees=[]):
         self.method = method
         self.filename = filename
         self.cat = cat
+        if len(fees) == 0:
+            self.fees = [30,20,20]
+            print "Warning: fees set to %s" % self.fees
+        else:
+            self.fees = fees
         self.reload()
         print "  [Using software PTT %s]" % ptt_version
         print ""
@@ -1308,8 +1314,9 @@ class Registration(object):
                 events = events + "     "
             # dcopen::topay1=5+20*k
             # mida::topay1=25*k
+            # nc2010:10+20k
             if k>0:
-                topay1=5+20*k
+                topay1=self.fees[k-1]
             else:
                 topay1=0
             topay2=0
@@ -1522,7 +1529,7 @@ class Registration(object):
                             out.write("%s\n" % key)
             # DCOPEN: 5+20k   MIDA:   25*k
             if k>0:
-                topay1=5+20*k
+                topay1=self.fees[k-1]
             else:
                 topay1=0
             #topay1=25*k
@@ -1531,6 +1538,7 @@ class Registration(object):
                 if usabfee > 0:
                     topay2=usabfee
                 else:
+                    # 30 is the standard USAB membership fee
                     topay2=30
             if usabfee > 0:
                 topay2 = usabfee
