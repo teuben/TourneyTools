@@ -25,6 +25,9 @@
 #        so needs to be normalized
 #     players_money needs an option to allow forcing +30 if no USAB1, but for final USAB0 sufficient
 #        this way we do conservative at registration,but relaxed name fit for USAB/final report
+#     REQ players should earn points by:
+#        - being USAB member
+#        - by having paid
 
 ptt_version = "$Revision$  $Date$"
 
@@ -460,7 +463,7 @@ class USAB4(object):
     19 Zip	        
     24 Expiration Date  
     Used for DC Open 2010 - new RailStation database 
-
+             MIDA 2010
     """
    
     def __init__(self,filename):
@@ -519,8 +522,10 @@ class USAB4(object):
         if len(found) > 1:
             all = []
             for i in found:
-                print "%s %s" % (i[2],i[1])
-            return []
+                print "%s %s" % (i[1],i[0])
+            # let's return last one  (2010 issue)
+            # since that one has the expiration date it seems
+            return [found[len(found)-1]]
         return found
     def findbyusab(self,usab):
         """enter a USAB number, e.g. 132, 400857"""
@@ -534,11 +539,38 @@ class USAB4(object):
         """find a USAB number and expiration date, e.g. 132, 400857
         integer and string are returned
         2010 didn't have expiration , return blank space
+        march 2010 ok again
         """
         i = self.findbyname(name)
         if len(i) > 0:
-            return (i[0][12],'n/a')
-        return (0,0)
+            if len(i[0])>12:
+                print "GOOD: ",len(i),':',i
+                if len(i[0])>24:
+                    return (i[0][12],i[0][24])
+                else:
+                    return (i[0][12],'xx/xx/xxxx')
+            else:
+                print "BAD: ",len(i),':',i
+                return (0,'yy/yy/yyyy')
+        return (0,'zz/zz/zzzz')
+    def findusabfromname_new(self,name):
+        """find a USAB number and expiration date, e.g. 132, 400857
+        integer and string are returned
+        2010 didn't have expiration , return blank space
+        march 2010 ok again
+        """
+        i = self.findbyname(name)
+        if len(i) > 0:
+            if len(i)>12:
+                print "GOOD: ",len(i),':',i
+                if len(i)>24:
+                    return (i[12],i[24])
+                else:
+                    return (i[12],'xx/xx/xxxx')
+            else:
+                print "BAD: ",len(i),':',i
+                return (0,'yy/yy/yyyy')
+        return (0,'zz/zz/zzzz')
             
             
         
@@ -564,7 +596,7 @@ class Registration(object):
     The 'event' is then made up of a category and level, e.g.   'ms-S'
 
     """
-    def __init__(self,filename,method,cat,fees=[]):
+    def __init__(self,filename,method,cat,fees=[],final=False):
         self.method = method
         self.filename = filename
         self.cat = cat
@@ -573,6 +605,7 @@ class Registration(object):
             print "Warning: fees set to %s" % self.fees
         else:
             self.fees = fees
+        self.final = final
         self.reload()
         print "  [Using software PTT %s]" % ptt_version
         print ""
@@ -1324,7 +1357,7 @@ class Registration(object):
                         events = events + " " + key
                         k = k + 1
             for i in range(k,3):
-                events = events + "       "
+                events = events + "     "
             # dcopen::topay1=5+20*k
             # mida::topay1=25*k
             # nc2010:10+20k
@@ -1353,6 +1386,10 @@ class Registration(object):
                 out.write(" %s :" % events)
             #out.write(" %-10s %-10s %-10s %-10s: %3d :" % (usab,usab0,usabexp,usabmem,usabfee))
             out.write(" %-10s %-10s: %3d :" % (usab,usabmem,usabfee))
+            if k==0 and topay2 > 0:
+                topay2 = 0
+            if latefee==0 and dues==0 and k>0 and not self.final:
+                latefee=10
             if Qusab:
                 out.write(" %s" % usabcomment)
             else:
@@ -1587,8 +1624,8 @@ class Registration(object):
             out.write("\n");
             out.write("Paid:     %d " % dues)
             if dues==0 and latefee==0:
-                out.write("        (Adding $5 late fee for no payment present yet)\n")
-                latefee = 5
+                out.write("        (Adding $10 late fee for no payment present yet)\n")
+                latefee = 10
             out.write("              ")
             out.write("USAB fee: %d\n" % usabfee)
             out.write("Due:      %d    =   %d (entry) + %d (usab) + %d (late) - %d (paid)\n" % (topay1+topay2+latefee-dues,topay1,topay2,latefee,dues))
