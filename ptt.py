@@ -1166,7 +1166,7 @@ class Registration(object):
                         partner = ""
                     print "%s : %s" % (key,partner)
             
-    def list1(self,out=sys.stdout,missing=True):
+    def list1(self,out=sys.stdout,missing=True,age=False):
         """list of all players and their events.
         Optionally a filename can be given, defaults to screen"""
         n = 0
@@ -1177,14 +1177,20 @@ class Registration(object):
         tshirt={}
         for player in self.players:
             n = n + 1
-            name = "%-15s, %-15s (%s)" % (player['lname'],player['fname'],player['state'])
+            name = "%-16s, %-16s (%s)" % (player['lname'],player['fname'],player['state'])
             events = ""
             sex = player['sex']
+            year=2010-int(player['birthday'].split('/')[2])
+            minyear=99
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
                     key = event+'-'+cat
                     if player.has_key(key):
                         events = events + " " + key
+                        # check for AGE
+                        if age:
+                            thisyear=int(cat[1:])
+                            if thisyear < minyear: minyear = thisyear
                         # check for REQ
                         if event == 'xd':
                             key1='xp-'+cat
@@ -1193,7 +1199,13 @@ class Registration(object):
                         if player.has_key(key1):
                             if request(player[key1]):
                                 events = events + " (" + player[key1] + ")"
-            out.write("%3d: %-30s %s: %s\n" % (n,name,sex[0],events))
+            if age:
+                if year >= minyear:
+                    out.write("%3d: %-32s %s %2d: %s *** %s\n" % (n,name,sex[0],year,events,minyear))
+                else:
+                    out.write("%3d: %-32s %s %2d: %s\n" % (n,name,sex[0],year,events))
+            else:
+                out.write("%3d: %-32s %s: %s\n" % (n,name,sex[0],events))
             if len(events) > 0:
                 s = player['tshirt']
                 if tshirt.has_key(s):
@@ -1289,7 +1301,7 @@ class Registration(object):
         sum4n = 0
         for player in self.players:
             n = n + 1
-            name = "%-15s, %-15s (%3s)" % (player['lname'],player['fname'],player['state'])
+            name = "%-16s, %-16s (%3s)" % (player['lname'],player['fname'],player['state'])
             events = ""
             sex = player['sex']
             email = player['email']
