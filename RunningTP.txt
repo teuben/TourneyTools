@@ -1,5 +1,7 @@
+version:  $Id$
 Some notes on Using BTP with PTT  (Peter's Tourney Tools)
 =========================================================
+
 
 
 PREPARATION
