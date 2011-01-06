@@ -5,8 +5,8 @@ Some notes on Using BTP with PTT  (Peter's Tourney Tools)
 PREPARATION
 ===========
 
-The TourneyTools are able to take a players registration list
-(those emails that contains "keyword=value" pairs) into the various text
+The TourneyTools are able to take a players registration list (those
+emails that contains "keyword=value" pairs) into the various text
 files for preparing registration and import into TP. We've used a
 variety of formats for a number of years now (dcopen, njopen, mida and
 also Koshy's format from the PA website).
@@ -16,20 +16,20 @@ produce a ms-A.list file as well as a ms-A.csv (comma separated value)
 file. Sadly, TP does not like the latter one, so they need to be
 transformed into excel (.xls) files to automate the import into TP.
 
-Luckily there is also a tool to do this automatically in OpenOffice, see
-the csv2xls shell script, although it is not too much labor to convert a
-"csv" file into an "xls" file.
+Luckily there is also a tool to do this automatically in OpenOffice,
+see the csv2xls shell script, although it is not too much labor to
+convert a "csv" file into an "xls" file.
 
-It's quite possible you can also do this on a windows box, or mac, 
-but my current experience is solely with linux.
+It's quite possible you can also do this on a windows box, or mac, but
+my current experience is solely with linux.
 
 The XLS files can be imported into TP once you have established a
 tournament, and you have created events and told it the size (16 or 32
-or even 64 teams). There is somewhere in the 2nd or 3rd pulldown at the
-top an IMPORT action   <<gotta get better description of this>>
+or even 64 teams). There is somewhere in the 2nd or 3rd pulldown at
+the top an IMPORT action <<gotta get better description of this>>
 
 One comment on singles vs. doubles: for doubles a pair is defined by
-two consquetive lines, e.g. line 1 and 2 are the first pair, line 3
+two consequative lines, e.g. line 1 and 2 are the first pair, line 3
 and 4 are the 2nd pair etc.  When you import this XLS file it is thus
 very important to click on that button in the lower left to "link up
 pairs" (or whatever it's called), otherwise you'll have a big mess.
@@ -53,13 +53,13 @@ WORKFLOW
    keeps forcing you to navigate too much through the filesystem)
    It likes "My Documents/Tournaments"
 
-   ->template1
+   ->template1.tp
 
 2) Add properties
    Under 'Events', add (or pick) events. No size of the draw is needed
    yet, and the events can also be imported from another tournament.
 
-   -> template2
+   -> template2.tp
 
 3) Now for each event in the [Roster] do the following:
    (it helps to click on [Roster] on the left side, and select each event)
@@ -78,7 +78,7 @@ WORKFLOW
    then go into explorer,and copy/paste to make that backup. This is
    very important, otherwise the copy is probably not sane.
 
-   -> template3
+   -> template3.tp
 
 4) Now foreach event you the enter the players:
 
@@ -157,7 +157,8 @@ TourneyTools doesn't use USAB numbers, but defines a uniq player ID which we
 use during the tournament. They are 1 .. number_of_players in the tournament,
 and for other reasons are defined by when they registered (1 being the first,
 N being the last). Sometimes comes in handy if you have to give preference
-based on this rank.
+based on this rank. But they are NOT the player number the players see, those
+are from an alphabetical listing of players.
 
 FILES:
 ======
@@ -165,7 +166,9 @@ FILES:
 template1	only named the tournament "dcopen", added the logo
 template2	added the usual dcopen {ms,ws,md,wd,xd}-{A,C,S} events
 template3	added the sizes (32,16,32,16,32) A,C and (16,4,16,4,16) S
-template4	added courts and timeslots (12, 
+template4	added courts and timeslots (13, 26, 26)
+template5       imported the A's
+
 other tips:
 
 
