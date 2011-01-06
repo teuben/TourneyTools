@@ -1,26 +1,31 @@
 Some notes on Using BTP with PTT  (Peter's Tourney Tools)
 =========================================================
 
-The TourneyTools are able to take a players registration list (the
-emails that contains "keyword=value" pairs) into the various text files
-for preparing registration and import into TP. We've used a variety
-of formats  for a number of years now (dcopen, njopen, mida and also
-Koshy's format from the PA website).
+
+PREPARATION
+===========
+
+The TourneyTools are able to take a players registration list
+(those emails that contains "keyword=value" pairs) into the various text
+files for preparing registration and import into TP. We've used a
+variety of formats for a number of years now (dcopen, njopen, mida and
+also Koshy's format from the PA website).
 
 For each event, which we normally call something like "ms-A", it will
 produce a ms-A.list file as well as a ms-A.csv (comma separated value)
 file. Sadly, TP does not like the latter one, so they need to be
 transformed into excel (.xls) files to automate the import into TP.
 
-Luckily there is a tool to do this automatically in OpenOffice, see
-the csv2xls shell script.
+Luckily there is also a tool to do this automatically in OpenOffice, see
+the csv2xls shell script, although it is not too much labor to convert a
+"csv" file into an "xls" file.
 
 It's quite possible you can also do this on a windows box, or mac, 
 but my current experience is solely with linux.
 
 The XLS files can be imported into TP once you have established a
 tournament, and you have created events and told it the size (16 or 32
-or even 64teams). There is somewhere in the 2nd or 3rd pulldown at the
+or even 64 teams). There is somewhere in the 2nd or 3rd pulldown at the
 top an IMPORT action   <<gotta get better description of this>>
 
 One comment on singles vs. doubles: for doubles a pair is defined by
@@ -31,6 +36,11 @@ pairs" (or whatever it's called), otherwise you'll have a big mess.
 Also, PTT puts the male first in mixed doubles, these are IBF
 requirements.
 
+INSTALLATION
+============
+Make sure you have the correct licence for BTP. The two files,
+TP.DAT and TP.PD need to be in "Program Files/Visual Reality/BTP/"
+
 
 WORKFLOW
 ========
@@ -38,22 +48,37 @@ WORKFLOW
 1) create a new tournament
    Tournament ->New
 
+   ? it is adviced to use a folder in the default location BTP suggest, and 
+   maybe make a shortcut to this folder from the desktop, otherwise BTP
+   keeps forcing you to navigate too much through the filesystem)
+   It likes "My Documents/Tournaments"
+
+   ->template1
+
 2) Add properties
    Under 'Events', add (or pick) events. No size of the draw is needed
    yet, and the events can also be imported from another tournament.
-   E.g. if you are 
 
-3) Now for each event in the Roster do the following:
+   -> template2
+
+3) Now for each event in the [Roster] do the following:
+   (it helps to click on [Roster] on the left side, and select each event)
 
    Draw->Add Draw
    	     select Elimination, ->Next
-	     Select size (2,4,8,16,32,...), confirm name, etc. -> Next
-	     Select 'First Match' (3rd bullet) -> Next
+	     Select size (2,4,8,16,32,...), confirm name, no Playoff 3/4, -> Next
+	     Select 'First Match' (3rd bullet, need this each time) -> Next  
 	     Select columns 'MemberID' and 'State' for the layout -> Next
 	     Finish
 
 	     at this stage these events still have 0 entries of course
 
+   Once this is done, it's perhaps best to save this file in a template.
+   Be sure when you do this, you CLOSE the database (the tournament),
+   then go into explorer,and copy/paste to make that backup. This is
+   very important, otherwise the copy is probably not sane.
+
+   -> template3
 
 4) Now foreach event you the enter the players:
 
@@ -81,12 +106,13 @@ WORKFLOW
 
 	  I don't see an option to rank by state.
      
-    Draw->Make Draw
+    Draw->Make Draws
 
     	  select 'Separation' by 'State' in one of the selections that will come up
 	  
 	  look at the draw, if not happy, try 'Re-make Draw' or go ->Back and try
 	  something else....
+	  most likely manually swap players. See below, since that's a bit tricky.
 
 
 
@@ -133,8 +159,23 @@ and for other reasons are defined by when they registered (1 being the first,
 N being the last). Sometimes comes in handy if you have to give preference
 based on this rank.
 
+FILES:
+======
 
+template1	only named the tournament "dcopen", added the logo
+template2	added the usual dcopen {ms,ws,md,wd,xd}-{A,C,S} events
+template3	added the sizes (32,16,32,16,32) A,C and (16,4,16,4,16) S
+template4	added courts and timeslots (12, 
 other tips:
 
 
 CutePDF is a good PDF writer for Windows
+BullzipPDFPrinter is another one.
+
+
+- random notes:
+
+on times: use 1-day, and start and step and number of steps
+   16:30 - 23:30 is 13 steps of 30
+   08.15 - 22:50 is 26 steps of 35
+   08:30 - 15:30 is 13 steps of 35
