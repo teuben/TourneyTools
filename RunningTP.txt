@@ -142,16 +142,30 @@ Reminder of color codes the draws will have:
 	 	next step would be "Player->Import entries"
 		then "Draw->Make Draw"
 	 yellow - after entries added and draws made
+	 	Now go right-click->Schedule Match or
+		       right-click->Schedule Round
+         blue - some scheduling done
+	      	continue with this scheduling
+	 green - all done with scheduling
+	 dark grey - all events have been played
+
+
 
 	 red - something bad, e.g. players important but no
-	 green - all done?
-
 
 
 6) Now that your have all entries in the draws, you can setup the times to play, 
    the courts, the gyms, order or play etc.etc.   Outside the current scope.
 	  
 
+
+MAKEING THE DRAWS
+=================
+
+We do 8 seeds and 8 shadow seeds (those are never published) for 32 players,
+and 4 seeds plus 4 shadow if we have 16 players.
+For below power of 2, fall back to the power of two below the count.
+So for 31 we use 4 seeds and 4 shadow.
 
 CURRENT FLAWS:
 =============
@@ -162,6 +176,12 @@ and for other reasons are defined by when they registered (1 being the first,
 N being the last). Sometimes comes in handy if you have to give preference
 based on this rank. But they are NOT the player number the players see, those
 are from an alphabetical listing of players.
+
+
+My fault/feature:
+   if you import just the main list and not a 'w'(wait) list,
+you will wind up having to import them again. better to have them
+all in there,and the bottom one are on waiting list.
 
 FILES:
 ======
