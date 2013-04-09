@@ -1,0 +1,139 @@
+Caveats in using the 2013 of Tournamentsoftware.COM  BTP program.
+
+
+abbreviations used:
+   
+  TS   tournamentsoftware.com (i.e. web database)
+  BTP  the tournament program (i.e. computer database)
+  TD   tournament director
+
+
+1 although players get a nice feedback on what they've done in the registration,
+  the TD receives nothing, despite his email is on the website. 
+  Not until they pull info from TS to BTP, which often is in a bulk load.
+
+  Workaround?   none, keep on clicking Internet->Entries->Next->.....
+
+  The other side effect is that I need to do extra work to get the players
+  in my own mail data base, 
+
+2 some of the info a player makes, will not be re-sent to BTP for an existing
+  tournament. Worse yet, if you edit the BTP versionm, TS will overwrite it
+  again.
+
+  There a half-lie on the TS pages about this.
+
+3 after player registered, it claims they need to contact TD for changes.
+  that's not true, until the deadline they can make the changes themselves.
+
+4 for certain changes, the pull from TS results in a suggestions there are
+  no updates, but one more click shows there are actually updates
+  (e.g. if a comment was added)
+
+  This is also truely annoying, as you have no idea what was changed in an 
+  entry.  An email (item 4) would resolve this.
+
+
+5. cannot do genderless singles and doubles?
+
+6. Cannot merge database.  THe most common one is the desk running the 
+   tournament and registration to clean up the membership info.
+
+7. Once you've published, registered players will show up on the Players
+   list. If you don't want this to happen....
+   (junichi talking)
+   you need to clear the database in a backup version, publish that
+   and don't publish again....
+   (of course this is silly, you couldn't update regulations etc.)
+   So this is another issue with TS, because not all tournaments want to
+   reveal their players during the registration period to prevent players
+   from biasing their entry based on who they see.
+   [is that a internationally recognized valid concern]
+
+
+If someone entry available or not available time, TP tell you the
+conflict when you schedule the match. (Player is not available!) That
+is very annoying.
+
+I know that is problem. You should not change any address (especially
+State information) or membership number until online entry close.
+
+
+Only note filed will not be overwritten. I always copy membership
+information from USAB website and paste to Note filed of TP.
+
+ 
+
+Du Jing   #2035064       04/15/2014    04/07/1962   Rutherford, NJ
+
+ 
+
+Regards,
+
+
+
+xx.    The "Find"  does not do anything useful if you don't know the last name,
+       i.e. it does not search for middle parts in the name. completely useless.
+
+xx.    No flexibility for MDJO to set the age reached at some speficified 
+       (e.g. tournament) vs. end of year.
+
+
+xx.    Exporting player database produces an empty Sheet2 which
+       there is no Sheet1. There is a proper file header, just	
+       no data.
+
+       Player -> Player database -> Export Player Database
+
+       this produces a small XLS file.
+       Tried this with and without ctrl-A (select all) while displaying the
+       players.
+
+xx.    Can it be made easier for a person to sign up a whole team , such that
+       accounts are created where information is inherited from a previous
+       account?
+
+
+xx     If we change somebody's entry, the parents don't see this change, the
+       database in TS is now different.
+
+xx     Manual entry cannot  pick a club???
+       I recall i entered all the DOB 's, but they're all gone from the DB now.
+
+
+
+order of things to do once we get close to the end:
+
+
+- save TPBACKUP files frequently
+- save a spreadsheet from      Draw->Export to Excel
+- save first time matches for website
+
+
+Alternative methods:
+
+If there's some other type of processing you like to do to a TP file, there are
+two ways:
+
+- export the data as an XLS spreadsheet and use tools to work on those. This can quickly
+  get very hairy, as there is no good defineable remnant of the concept we call
+  a Database in the First Normal Form. See below for a better approach, but I know
+  from experience a lot of people think they understand complex XLS files and
+  just point and click their life away from such a well defined database, and wind
+  up with something only they understand its provenance.
+
+  Example: if you want to do some registration and money at the desk, while
+  the TD is using BTP, you're screwed, you have to do something (be it on paper,
+  be it in XLS) that later may need to get back into the official BTP version, 
+  at least if you care about getting your TP file in correct shape.  It may very
+  well be that your treasurer is happy with an XLS file, which of course a lot
+  more people understand than a TP file. So, the pragmatic approach may just be
+  an XLS file.
+
+
+- use tools that understand a Microsoft Access Database.
+  I have experience using a python based tool
+  Others have used Java to peel open and use this to define a ranking system.
+  The key in this example was to have a unique identifier for each player,
+  which of course in our case is the USAB membership number.
+  
