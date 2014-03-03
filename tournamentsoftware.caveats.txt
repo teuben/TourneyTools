@@ -129,6 +129,7 @@ two ways:
   well be that your treasurer is happy with an XLS file, which of course a lot
   more people understand than a TP file. So, the pragmatic approach may just be
   an XLS file.
+  Use:   Players -> Export ... ->
 
 
 - use tools that understand a Microsoft Access Database.
