@@ -27,6 +27,10 @@ stuff)
 - download the BTP program (in the right language, or you will get it in Dutch :-)
   from http://www.tournamentsoftware.com 
 
+  If you already have one, there might be a problem if it's too old. If it offers
+  you to upgrade, might not want to do that, because it will cripple your
+  version as you don't have the correct license key.
+
 - get a license key from USAB or your friendly BTP helper. You can load in this
   key form the program  <details.....>
   Note: licenses are typically only valid for a year.
@@ -44,8 +48,15 @@ stuff)
   profile -> ... -> sellers -> encrypted blabla
   and "Add" your bla bla. It will return some 16 letter "Cert ID", which BTP wants you
   to fill out before you can publish (push info from BTP into TS) your tournament.
-  
 
+  (the good thing here was that the last year's info still worked, you only need the
+  paypal gmail account you used, and the 16 letter "Cert ID" you used last year
+  in the "Payments" tab of the publish portion in BTP.
+
+- before you publish, review some options. There are places to enter the URL of the
+  tournament, the Publish->Regulations doesn't allow html links, but the Properties
+  does have a slot for it.
+  
 
 FAQ
 ===
@@ -128,7 +139,8 @@ INSTALLATION
 ============
 Make sure you have the correct licence for BTP. The two files,
 TP.DAT and TP.PD need to be in "Program Files/Visual Reality/BTP/"
-
+If you get a *.license file, start the program, and let BTP install
+this file.
 
 WORKFLOW
 ========
@@ -298,3 +310,9 @@ BTP Tricks/Wishlist:
 - you can have multiple versions of BTP all grabbing the same info from the website.
   just make sure you start from the same .TP file 
 
+
+Other Notes:
+============
+
+- 2014.2 was offered as an update.. scary, ok, lets do it.
+  Yup, it crippled my 2013 version.
