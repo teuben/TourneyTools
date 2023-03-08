@@ -10,7 +10,8 @@ TAR = Makefile drawplot.c makedraw.c draw.h  team.h
 #PLROOT = $(NEMO)/local/plplot
 #PLROOT = $(NEMO)/local/plplot-990122
 #PLROOT = $(NEMO)/local/plplot-980318
-PLROOT = /usr/local/plplot
+#PLROOT = /usr/local/plplot
+PLROOT = /usr/
 
 
 # solaris
@@ -33,7 +34,8 @@ L = $(NEMOLIB)/libnemo.a
 #
 #LIBS = $(EL) -L$(NEMOLIB) -L/rh62/usr/lib -lnemo -lPltk -lX11 -lvga -ldl -lm -lg2c
 INCS = -I$(PLROOT)/include -I$(PLROOT)/include/plplot -I$(NEMOINC) -I$(NEMOLIB)
-LIBS = $(EL) -lnemo -lplplotd -lX11 -lgd -lpng -ljpeg -lz -ldl -lm -lg2c
+#LIBS = $(EL) -lnemo -lplplotd -lX11 -lgd -lpng -ljpeg -lz -ldl -lm -lg2c
+LIBS = $(EL) -lnemo -lplplot -lX11 -lpng -ljpeg -lz -ldl -lm 
 
 OBJFILES=
 BINFILES= makedraw drawplot
@@ -63,7 +65,7 @@ $(L):   $(LOBJFILES)
 	ar ruv $(L) $?
 	$(RANLIB) $(L)
 	rm -f $?
-				
+
 lib:   $(L)
 
 bin: $(BINFILES)
