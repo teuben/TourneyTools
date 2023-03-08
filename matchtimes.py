@@ -54,12 +54,12 @@ def dcopen2009(t0=30,t1=35,t2=40):
     court = 9
     #
     total = 0
-    print "Hours:      ",hours
-    print "Match times:",mt0,mt1,mt2
+    print("Hours:      ",hours)
+    print("Match times:",mt0,mt1,mt2)
     for h in hours:
         total = total + h
     cm = total*court*60
-    print "Total %2d hours on %2d courts: %d court minutes" % (total,court,cm)
+    print("Total %2d hours on %2d courts: %d court minutes" % (total,court,cm))
 
     #
     a = [32, 16, 32, 16, 32]
@@ -68,21 +68,21 @@ def dcopen2009(t0=30,t1=35,t2=40):
     sum = 0
     for cat in a+c+s:
         sum = sum + double_elimination(cat)
-    print "Total power of 2:           ",sum
+    print("Total power of 2:           ",sum)
     a = [33, 10, 36, 13, 32]
     c = [46, 15, 44, 14, 41]
     s = [23,  1, 15,  4,  8]
     sum = 0
     for cat in a+c+s:
         sum = sum + double_elimination(cat)
-    print "Total too much:             ",sum
+    print("Total too much:             ",sum)
     a = [33, 10, 35, 11, 25]
     c = [46, 15, 40, 12, 29]
     s = [23,  1, 13,  3,  5]
     sum = 0
     for cat in a+c+s:
         sum = sum + double_elimination(cat)
-    print "Total about right:          ",sum
+    print("Total about right:          ",sum)
     
 
 def pjt():
