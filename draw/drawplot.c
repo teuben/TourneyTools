@@ -21,6 +21,7 @@
  *      7-mar-02   1.1  follow IBF/USAB rules of placing seeds a little closer
  *     17-mar-02      a add timeslot=
  *     25-mar           fixed not showing finals, improve rr plot
+ *      7-mar-23   1.2  plwid -> plwidth
  *      
  */
 
@@ -44,7 +45,7 @@ string defv[] = {
     "looser=\n      Show 1st or 2nd round loosers instead of plotting",
     "timeslot=\n    Optional lookup table of timeslot numbers",
     "plotid=t\n     Plot match ID and timeslot?",
-    "VERSION=1.2b\n 25-mar-02 PJT",
+    "VERSION=1.3\n  7-mar-2023 PJT",
     NULL,
 };
 
@@ -89,7 +90,8 @@ nemo_main()
     stream tstr;
     bool Qid = getbparam("plotid");
 
-    if (p=0) {
+    if (p==0) {
+      // not implemented
       p = get_p(getparam("in"));
       if (p==0) error("Could not find drawdept p= in %s",getparam("in"));
     }
@@ -105,7 +107,7 @@ nemo_main()
     } else {                /* regular single elimitation draw */
         for (n=1, i=0; i<p; i++)
             n *= 2;
-        dprintf(1,"Draw with maximum of %d players in the first round\n",n);
+        dprintf(1,"Draw with maximum of %d players in the first round for p=%d\n",n,p);
     }
     if (hasvalue("cols"))
         cols = burststring(getparam("cols"),", \t");
@@ -212,6 +214,7 @@ int get_p(string fname)
 
   instr = stropen(fname,"r");
   strclose(instr);
+  return 0;
 }
 
 
@@ -664,12 +667,12 @@ void plot_dd (
 #endif
     plfontld(1);                    /* load the extended character set */
 
-    plwid(4);
+    plwidth(4);
     pljoin(0.0,0.0,0.0,1.0);
     pljoin(0.0,1.0,1.0,1.0);
     pljoin(1.0,1.0,1.0,0.0);
     pljoin(1.0,0.0,0.0,0.0);
-    plwid(1);    
+    plwidth(1);    
 
     /* the draw: need p+1 columns */
 
@@ -693,9 +696,9 @@ void plot_dd (
 
     k = n;
 
-    plwid(3);
+    plwidth(3);
     plptex(0.5,1.08,1.0,0.0,0.5,header);
-    plwid(1);
+    plwidth(1);
     
     for (i=0; i<=p; i++) {              /* loop over all rounds */
                                 /* i=0 is the first round; i=p final winner */
@@ -725,12 +728,12 @@ void plot_dd (
         for (j=0; j<k; j++) {           /* loop over all slots in a round */
             slot++;
             if (i>=pmin) {
-                plwid(3);
+                plwidth(3);
 		if (pmin == 0 && i==0)
 	            pljoin(0.0,y,x+dx*0.9,y);
 		else
 	            pljoin(x+dx*0.1,y,x+dx*0.9,y);
-                plwid(1);
+                plwidth(1);
                 if (j%2) {      /* plot the 'arrows' for Diane */
                     pljoin(x+dx*0.9,y,x+dx*1.1,y+0.5*dy);
                     pljoin(x+dx*1.1,y+0.5*dy,x+dx*0.9,y+dy);
@@ -1003,12 +1006,12 @@ void plot_rr (
     plwind(0.0, 1.0, 0.0, 1.1);     /*   0-1 is for the draw 1-1.1 top labels */
     plfontld(1);                    /* load the extended character set */
 
-    plwid(4);                       /* draw thick boundary */
+    plwidth(4);                       /* draw thick boundary */
     pljoin(0.0,0.0,0.0,1.0);
     pljoin(0.0,1.0,1.0,1.0);
     pljoin(1.0,1.0,1.0,0.0);
     pljoin(1.0,0.0,0.0,0.0);
-    plwid(1);  
+    plwidth(1);  
 
 
     /* ok for 2, 3 or 4 teams in a RR */
@@ -1020,9 +1023,9 @@ void plot_rr (
 
     deltay = 0.05;
 
-    plwid(3);
+    plwidth(3);
     plptex(0.5,1.08,1.0,0.0,0.5,header);
-    plwid(1);
+    plwidth(1);
 
     plschr(0.0,0.8);
     plptex(0.5,1.03,1.0,0.0,0.5,"Round Robin");
@@ -1036,11 +1039,11 @@ void plot_rr (
             x = 0.0 + ix*dx;
             if (ndraw==1) x += 0.5*dx;
 	    if (ix==1) y-=drop;         /* the one in the middle must go down a little for long names */
-            plwid(3);
+            plwidth(3);
             pljoin(x+0.05*dx,y+0.75*dy,x+0.45*dx,y+0.75*dy);
             pljoin(x+0.05*dx,y+0.25*dy,x+0.45*dx,y+0.25*dy);
             pljoin(x+0.55*dx,y+0.50*dy,x+0.95*dx,y+0.50*dy);
-            plwid(1);
+            plwidth(1);
             pljoin(x+0.45*dx,y+0.75*dy,x+0.55*dx,y+0.50*dy);
             pljoin(x+0.45*dx,y+0.25*dy,x+0.55*dx,y+0.50*dy);
 
