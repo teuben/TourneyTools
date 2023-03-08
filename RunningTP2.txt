@@ -1,4 +1,4 @@
-version:  $Id$
+version:  2023
 
 Some notes on Using BTP 
 ========================
@@ -15,7 +15,7 @@ Sorry for the rant, now to the real meat of this story.
 
 The big advantage of using BTP with the online (tournamentsoftware.com) 
 system is that everybody has an account with personal info (USAB# etc.)
-
+Plus you can live publish your tournament.
 
 OUTLINE
 =======
@@ -118,6 +118,7 @@ transformed into excel (.xls) files to automate the import into TP.
 Luckily there is also a tool to do this automatically in OpenOffice,
 see the csv2xls shell script, although it is not too much labor to
 convert a "csv" file into an "xls" file.
+  NOTE:   there's now a better python procedure using openpyxl
 
 It's quite possible you can also do this on a windows box, or mac, but
 my current experience is solely with linux.
@@ -180,7 +181,7 @@ WORKFLOW
 
    -> template3.tp
 
-4) Now foreach event you the enter the players:
+4) Now for each event you the enter the players:
 
    Player->Import Entries
           ->Browse ; to your XLS file
@@ -256,7 +257,7 @@ Reminder of color codes the draws will have:
 	  
 
 
-MAKEING THE DRAWS
+MAKING THE DRAWS
 =================
 
 We do 8 seeds and 8 shadow seeds (those are never published) for 32 players,
@@ -278,7 +279,7 @@ are from an alphabetical listing of players.
 My fault/feature:
    if you import just the main list and not a 'w'(wait) list,
 you will wind up having to import them again. better to have them
-all in there,and the bottom one are on waiting list.
+all in there, and the bottom one are on waiting list.
 
 FILES:
 ======
