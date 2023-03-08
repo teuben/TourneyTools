@@ -87,14 +87,14 @@ class USAB0(object):
         fd = open(filename,'r')
         self.lines=fd.readlines()
         fd.close()
-        print "Read %d lines from %s" % (len(self.lines),filename)
+        print("Read %d lines from %s" % (len(self.lines),filename))
         self.players=[]
         count = 0
         for l in self.lines:
             p = l.strip()
             if count==0:
                 self.id=p.split('\t')
-                print "Header:",self.id
+                print("Header:",self.id)
             else:
                 id = p.split('\t')
                 id[0] = int(id[0])
@@ -103,7 +103,7 @@ class USAB0(object):
                     id.append(" ")
             count = count + 1
     def count(self):
-        print len(self.players)
+        print(len(self.players))
     def findbyname(self,name):
         """enter a name, first or last name
         Note names must be all in upper case
@@ -131,7 +131,7 @@ class USAB0(object):
                     # first name doesn't match well? The "JAMES LI WEN CHEH" case
                     found2=[]
                     for f in found:
-                        print f
+                        print(f)
                         if len(f[2])==0: continue
                         f1=f[2].split()[0]
                         n1=len(f1)
@@ -146,11 +146,11 @@ class USAB0(object):
                 if names[0]==i[2]:
                     found.append(i)
         else:
-            print "Cannot find names like : ",name
+            print("Cannot find names like : ",name)
         if len(found) > 1:
             all = []
             for i in found:
-                print "%s %s" % (i[2],i[1])
+                print("%s %s" % (i[2],i[1]))
             return []
         return found
     def findbyusab(self,usab):
@@ -197,14 +197,14 @@ class USAB1(object):
         fd = open(filename,'r')
         self.lines=fd.readlines()
         fd.close()
-        print "Read %d lines from %s" % (len(self.lines),filename)
+        print("Read %d lines from %s" % (len(self.lines),filename))
         self.players=[]
         count = 0
         for l in self.lines:
             p = l.strip()
             if count==0:
                 self.id=p.split('\t')
-                print "Header:",self.id
+                print("Header:",self.id)
             else:
                 id = p.split('\t')
                 id[0] = int(id[0])
@@ -213,7 +213,7 @@ class USAB1(object):
                     id.append(" ")
             count = count + 1
     def count(self):
-        print len(self.players)
+        print(len(self.players))
     def findbyname(self,name):
         """enter a name, first or last name
         Note names must be all in upper case
@@ -238,11 +238,11 @@ class USAB1(object):
                 if names[0]==i[2]:
                     found.append(i)
         else:
-            print "Cannot find names like : ",name
+            print("Cannot find names like : ",name)
         if len(found) > 1:
             all = []
             for i in found:
-                print "%s %s" % (i[2],i[1])
+                print("%s %s" % (i[2],i[1]))
             return []
         return found
     def findbyusab(self,usab):
@@ -283,14 +283,14 @@ class USAB2(object):
         fd = open(filename,'r')
         self.lines=fd.readlines()
         fd.close()
-        print "Read %d lines from %s" % (len(self.lines),filename)
+        print("Read %d lines from %s" % (len(self.lines),filename))
         self.players=[]
         count = 0
         for l in self.lines:
             p = l.strip()
             if count==0:
                 self.id=p.split(',')
-                print "Header:",self.id
+                print("Header:",self.id)
             else:
                 id = p.split(',')
                 if len(id[4]) > 0:
@@ -304,7 +304,7 @@ class USAB2(object):
                     id.append(" ")
             count = count + 1
     def count(self):
-        print len(self.players)
+        print(len(self.players))
     def findbyname(self,name):
         """enter a name, first or last name
         Note names must be all in upper case
@@ -329,11 +329,11 @@ class USAB2(object):
                 if names[0]==i[0]:
                     found.append(i)
         else:
-            print "Cannot find names like : ",name
+            print("Cannot find names like : ",name)
         if len(found) > 1:
             all = []
             for i in found:
-                print "%s %s" % (i[0],i[1])
+                print("%s %s" % (i[0],i[1]))
             return []
         return found
     def findbyusab(self,usab):
@@ -383,14 +383,14 @@ class USAB3(object):
         fd = open(filename,'r')
         self.lines=fd.readlines()
         fd.close()
-        print "Read %d lines from %s" % (len(self.lines),filename)
+        print("Read %d lines from %s" % (len(self.lines),filename))
         self.players=[]
         count = 0
         for l in self.lines:
             p = l.strip().upper()
             if count==0:
                 self.id=p.split('\t')
-                print "Header:",self.id
+                print("Header:",self.id)
             else:
                 id = p.split('\t')
                 id[6] = int(id[6])
@@ -399,7 +399,7 @@ class USAB3(object):
                 self.players.append(id)
             count = count + 1
     def count(self):
-        print len(self.players)
+        print(len(self.players))
     def findbyname(self,name):
         """enter a name, first or last name
         Note names must be all in upper case
@@ -424,11 +424,11 @@ class USAB3(object):
                 if names[0]==i[2]:
                     found.append(i)
         else:
-            print "Cannot find names like : ",name
+            print("Cannot find names like : ",name)
         if len(found) > 1:
             all = []
             for i in found:
-                print "%s %s" % (i[2],i[1])
+                print("%s %s" % (i[2],i[1]))
             return []
         return found
     def findbyusab(self,usab):
@@ -471,14 +471,14 @@ class USAB4(object):
         fd = open(filename,'r')
         self.lines=fd.readlines()
         fd.close()
-        print "Read %d lines from %s" % (len(self.lines),filename)
+        print("Read %d lines from %s" % (len(self.lines),filename))
         self.players=[]
         count = 0
         for l in self.lines:
             p = l.strip().upper()
             if count==0:
                 self.id=p.split('\t')
-                print "Header:",self.id
+                print("Header:",self.id)
             else:
                 id = p.split('\t')
                 if len(id[12]) > 0:
@@ -490,7 +490,7 @@ class USAB4(object):
                 self.players.append(id)
             count = count + 1
     def count(self):
-        print len(self.players)
+        print(len(self.players))
     def findbyname(self,name):
         """enter a name, first or last name
         Note names must be all in upper case
@@ -518,11 +518,11 @@ class USAB4(object):
                 if names[0]==i[1]:
                     found.append(i)
         else:
-            print "Cannot find names like : ",name
+            print("Cannot find names like : ",name)
         if len(found) > 1:
             all = []
             for i in found:
-                print "%s %s" % (i[1],i[0])
+                print("%s %s" % (i[1],i[0]))
             # let's return last one  (2010 issue)
             # since that one has the expiration date it seems
             return [found[len(found)-1]]
@@ -544,13 +544,13 @@ class USAB4(object):
         i = self.findbyname(name)
         if len(i) > 0:
             if len(i[0])>12:
-                print "GOOD: ",len(i),':',i
+                print("GOOD: ",len(i),':',i)
                 if len(i[0])>24:
                     return (i[0][12],i[0][24])
                 else:
                     return (i[0][12],'xx/xx/xxxx')
             else:
-                print "BAD: ",len(i),':',i
+                print("BAD: ",len(i),':',i)
                 return (0,'yy/yy/yyyy')
         return (0,'zz/zz/zzzz')
     def findusabfromname_new(self,name):
@@ -562,13 +562,13 @@ class USAB4(object):
         i = self.findbyname(name)
         if len(i) > 0:
             if len(i)>12:
-                print "GOOD: ",len(i),':',i
+                print("GOOD: ",len(i),':',i)
                 if len(i)>24:
                     return (i[12],i[24])
                 else:
                     return (i[12],'xx/xx/xxxx')
             else:
-                print "BAD: ",len(i),':',i
+                print("BAD: ",len(i),':',i)
                 return (0,'yy/yy/yyyy')
         return (0,'zz/zz/zzzz')
             
@@ -602,13 +602,13 @@ class Registration(object):
         self.cat = cat
         if len(fees) == 0:
             self.fees = [30,20,20]
-            print "Warning: fees set to %s" % self.fees
+            print("Warning: fees set to %s" % self.fees)
         else:
             self.fees = fees
         self.final = final
         self.reload()
-        print "  [Using software PTT %s]" % ptt_version
-        print ""
+        print("  [Using software PTT %s]" % ptt_version)
+        print("")
         os.system('date')
         self.ctime = time.ctime()
     def reload(self):
@@ -628,7 +628,7 @@ class Registration(object):
             """new MIDA"""
             self.parse5(self.filename)
         else:
-            print "Unimplemented method %d" % self.method
+            print("Unimplemented method %d" % self.method)
 
     def reset(self):
         self.sum = {}
@@ -682,7 +682,7 @@ class Registration(object):
                     for number in ['1','2','3','4','5']:
                         keye = 'event'+number
                         keyp = 'partner'+number
-                        if event.has_key(keye):
+                        if keye in event:
                             if  event[keye] == 'none': continue
                             new_key = event[keye]
                             player[new_key] = 1
@@ -695,7 +695,7 @@ class Registration(object):
                                 else:
                                     new_key = '?p-' + cat
                                 partner = '???'
-                                if event.has_key(keyp):
+                                if keyp in event:
                                     partner = event[keyp]
                                 player[new_key] = partner
                     # insert(player,['state','XX'],'state','state')
@@ -703,7 +703,7 @@ class Registration(object):
                     if len(player['usab']) == 0:
                         player['usab'] = '0'
                     if len(player['usab']) > 6:
-                        print "%s %s USAB# too long: %s" % (player['fname'],player['lname'],player['usab'])
+                        print("%s %s USAB# too long: %s" % (player['fname'],player['lname'],player['usab']))
                     self.players.append(player)
                 if inside:
                     if words[0] != 'BEGIN':
@@ -737,9 +737,9 @@ class Registration(object):
                             key   = thing+number
                             inserte(event,words,key)
         if cnt1==cnt2:
-            print "Found %d players in %s" % (cnt1,file)
+            print("Found %d players in %s" % (cnt1,file))
         else:
-            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+            print("Terrible, found %d starting frames and %d ending" % (cnt1,cnt2))
 
     # --------------------------------------------------------------------------------
     
@@ -775,10 +775,10 @@ class Registration(object):
                     inside = False
                     q = self.player2(player['fname'],player['lname'])
                     if len(q) > 0:
-                        print "###: Warning : player %s %s already registered" % (player['fname'],player['lname'])
-                    if not player.has_key('state'):
+                        print("###: Warning : player %s %s already registered" % (player['fname'],player['lname']))
+                    if 'state' not in player:
                         player['state'] = '??'
-                    if not player.has_key('sex'):
+                    if 'sex' not in player:
                         player['sex'] = '?'
                     self.players.append(player)
                 if inside:
@@ -819,9 +819,9 @@ class Registration(object):
                     insert(player,words,'Partner_MXD',     'xp-C')
 
         if cnt1==cnt2:
-            print "Found %d players in %s" % (cnt1,file)
+            print("Found %d players in %s" % (cnt1,file))
         else:
-            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+            print("Terrible, found %d starting frames and %d ending" % (cnt1,cnt2))
 
     # --------------------------------------------------------------------------------
     
@@ -854,10 +854,10 @@ class Registration(object):
                     inside = False
                     q = self.player2(player['fname'],player['lname'])
                     if len(q) > 0:
-                        print "###: Warning : player %s %s already registered" % (player['fname'],player['lname'])
-                    if not player.has_key('state'):
+                        print("###: Warning : player %s %s already registered" % (player['fname'],player['lname']))
+                    if 'state' not in player:
                         player['state'] = '??'
-                    if not player.has_key('sex'):
+                    if 'sex' not in player:
                         player['sex'] = '?'
                     self.players.append(player)
                 if inside:
@@ -916,9 +916,9 @@ class Registration(object):
                     insert(player,words,'Partner_JUNIORS',    'dp-J')
                     insert(player,words,'Partner_MXD_JUNIORS','xp-J')
         if cnt1==cnt2:
-            print "Found %d players in %s" % (cnt1,file)
+            print("Found %d players in %s" % (cnt1,file))
         else:
-            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+            print("Terrible, found %d starting frames and %d ending" % (cnt1,cnt2))
 
     def parse2(self,file):
         """parser for seniors2002"""
@@ -932,7 +932,7 @@ class Registration(object):
         f = open(file,'r')
         a = f.readlines()
         f.close()
-        print 'Found %d lines in %s' % (len(a),file)
+        print('Found %d lines in %s' % (len(a),file))
         cnt1 = 0
         cnt2 = 0
         inside = False
@@ -963,9 +963,9 @@ class Registration(object):
                                 insert(player,words,key,event)
 
         if cnt1==cnt2:
-            print "Found %d players in %s" % (cnt1,file)
+            print("Found %d players in %s" % (cnt1,file))
         else:
-            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+            print("Terrible, found %d starting frames and %d ending" % (cnt1,cnt2))
             
     # --------------------------------------------------------------------------------            
 
@@ -984,7 +984,7 @@ class Registration(object):
         f = open(file,'r')
         a = f.readlines()
         f.close()
-        print 'Found %d lines in %s' % (len(a),file)
+        print('Found %d lines in %s' % (len(a),file))
         cnt1 = 0
         cnt2 = 0
         inside = False
@@ -1004,10 +1004,10 @@ class Registration(object):
                         keye = 'event'+number
                         keyc = 'cat'+number
                         keyp = 'partner'+number
-                        if event.has_key(keye):
+                        if keye in event:
                             if  event[keye] == 'none': continue
                             cat = '?'
-                            if event.has_key(keyc): cat = event[keyc]
+                            if keyc in event: cat = event[keyc]
                             new_key = event[keye]+'-'+cat
                             player[new_key] = 1
                             if new_key[1] == 'd':
@@ -1018,7 +1018,7 @@ class Registration(object):
                                 else:
                                     new_key = '?p-' + cat
                                 partner = '???'
-                                if event.has_key(keyp):
+                                if keyp in event:
                                     partner = event[keyp]
                                 player[new_key] = partner
                     self.players.append(player)
@@ -1034,9 +1034,9 @@ class Registration(object):
                             inserte(event,words,key)
 
         if cnt1==cnt2:
-            print "Found %d players in %s" % (cnt1,file)
+            print("Found %d players in %s" % (cnt1,file))
         else:
-            print "Terrible, found %d starting frames and %d ending" % (cnt1,cnt2)
+            print("Terrible, found %d starting frames and %d ending" % (cnt1,cnt2))
 
     # --------------------------------------------------------------------------------
 
@@ -1047,12 +1047,12 @@ class Registration(object):
         ms-C ws-C md-C wd-C xd-C
         """
         for c in self.cat:
-            print "ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c)
+            print("ms-%s  ws-%s  md-%s  wd-%s  xd-%s" % (c,c,c,c,c))
 
     def map(self):
-        print ""
-        print "Summary of number of entries in tournament: %s" % self.filename
-        print "      ms   ws   md   wd   xd "
+        print("")
+        print("Summary of number of entries in tournament: %s" % self.filename)
+        print("      ms   ws   md   wd   xd ")
         # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
         sum = [0,0,0,0,0]
         n = [0,0,0,0,0]
@@ -1065,11 +1065,11 @@ class Registration(object):
             nsum = n[0] + n[1] + n[2] + n[3] + n[4]
             for i in range(5):
                 sum[i] = sum[i] + n[i]
-            print "%-3s:  %2d   %2d   %2d   %2d   %2d   |  %3d" % (c,n[0],n[1],n[2],n[3],n[4], nsum)
+            print("%-3s:  %2d   %2d   %2d   %2d   %2d   |  %3d" % (c,n[0],n[1],n[2],n[3],n[4], nsum))
         sumall = sum[0]+sum[1]+sum[2]+sum[3]+sum[4]
-        print "     ---  ---  ---  ---  ---   | ---" 
-        print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
-        print "Number of payments: %d" % (sum[0]+sum[1]+2*sum[2]+2*sum[3]+2*sum[4])
+        print("     ---  ---  ---  ---  ---   | ---") 
+        print("     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall))
+        print("Number of payments: %d" % (sum[0]+sum[1]+2*sum[2]+2*sum[3]+2*sum[4]))
 
     def match_count(self,p=2):
         def mp(n,p):
@@ -1080,10 +1080,10 @@ class Registration(object):
                 return (3*n)/2-2
             elif p==3:
                 return 2*n-4
-        print ""
-        print "Number of expected paired up matches in tournament: %s" % self.filename
-        print "Assuming elimination level %d" % p
-        print "      ms   ws   md   wd   xd "
+        print("")
+        print("Number of expected paired up matches in tournament: %s" % self.filename)
+        print("Assuming elimination level %d" % p)
+        print("      ms   ws   md   wd   xd ")
         # for e in ['ms' 'ws' 'md' 'wd' 'xd']:
         sum = [0,0,0,0,0]
         n = [0,0,0,0,0]
@@ -1096,29 +1096,29 @@ class Registration(object):
             nsum = n[0] + n[1] + n[2] + n[3] + n[4]
             for i in range(5):
                 sum[i] = sum[i] + n[i]
-            print "%-3s:  %2d   %2d   %2d   %2d   %2d   |  %3d" % (c,n[0],n[1],n[2],n[3],n[4], nsum)
+            print("%-3s:  %2d   %2d   %2d   %2d   %2d   |  %3d" % (c,n[0],n[1],n[2],n[3],n[4], nsum))
         sumall = sum[0]+sum[1]+sum[2]+sum[3]+sum[4]
-        print "     ---  ---  ---  ---  ---   | ---" 
-        print "     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall)
-        print "  (warning: as long as REQ partners have not been matched up, this match count is too large)"
+        print("     ---  ---  ---  ---  ---   | ---") 
+        print("     %3d  %3d  %3d  %3d  %3d   |  %3d" % (sum[0],sum[1],sum[2],sum[3],sum[4], sumall))
+        print("  (warning: as long as REQ partners have not been matched up, this match count is too large)")
 
     def conflicts(self):
         """identify various conflicts:
         - men in doubles events with women partners
         - players in doubles with no partner
         """
-        print "Searching for conflicts:"
+        print("Searching for conflicts:")
 
     def overlap(self,cat):
         if len(cat) != 2:
-            print "Cannot do overlap for %s" % cat
-        print "Checking overlap in %s :" % cat
+            print("Cannot do overlap for %s" % cat)
+        print("Checking overlap in %s :" % cat)
         for p in self.players:
             for c in  ['ms', 'ws', 'md', 'wd', 'xd']:
                 key1 = c + '-' + cat[0]
                 key2 = c + '-' + cat[1]
-                if p.has_key(key1) and p.has_key(key2):
-                    print "###: Player %s %s overlapping %s and %s" % (p['fname'],p['lname'],key1,key2)
+                if key1 in p and key2 in p:
+                    print("###: Player %s %s overlapping %s and %s" % (p['fname'],p['lname'],key1,key2))
 
     def states(self,out=sys.stdout):
         """Show state statistics.
@@ -1129,32 +1129,32 @@ class Registration(object):
         count={}
         for p in self.players:
             state = p['state']
-            if count.has_key(state):
+            if state in count:
                 count[state] = count[state] + 1
             else:
                 count[state] = 1
-        for state in count.keys():
+        for state in list(count.keys()):
             out.write("%s : %d\n" % (state,count[state]))
         if out!=sys.stdout:
             out.close()
 
     def need(self):
-        print "Checking for need partners:" 
+        print("Checking for need partners:") 
         for p in self.players:
             for l in self.cat:
                 for c in  ['md', 'wd', 'xd']:
                     key = c + '-' + l
-                    if p.has_key(key):
+                    if key in p:
                         partner = '???'
                         if c == 'xd':
                             key1 = 'xp-' + l
                         else:
                             key1 = 'dp-' + l
-                        if p.has_key(key1):
+                        if key1 in p:
                             partner = p[key1]
                         if request(partner):
                             player = "%s %s" % (p['fname'],p['lname'])
-                            print "###: %s  =>  %-20s    w/ %s" % (key,player,partner)
+                            print("###: %s  =>  %-20s    w/ %s" % (key,player,partner))
 
     def sort1(self):
         """Sort players alphabetically"""
@@ -1182,22 +1182,22 @@ class Registration(object):
         """find a player. you can give just the first name, last name, or both."""
         p = self.player1(name)
         if len(p) == 0:
-            print "No player found"
+            print("No player found")
             return
-        print "%s %s (%s) %s" % (p['fname'],p['lname'],p['state'],p['sex'][0])
+        print("%s %s (%s) %s" % (p['fname'],p['lname'],p['state'],p['sex'][0]))
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
                 key = event+'-'+cat
-                if p.has_key(key):
+                if key in p:
                     if key[1]=='d':
                         key1 = self.partner_key(key)
-                        if p.has_key(key1):
+                        if key1 in p:
                             partner = p[key1]
                         else:
                             partner = '???'
                     else:
                         partner = ""
-                    print "%s : %s" % (key,partner)
+                    print("%s : %s" % (key,partner))
             
     def list1(self,out=sys.stdout,missing=True,age=False):
         """list of all players and their events.
@@ -1218,7 +1218,7 @@ class Registration(object):
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
                     key = event+'-'+cat
-                    if player.has_key(key):
+                    if key in player:
                         events = events + " " + key
                         # check for AGE
                         if age:
@@ -1229,7 +1229,7 @@ class Registration(object):
                             key1='xp-'+cat
                         else:
                             key1='dp-'+cat
-                        if player.has_key(key1):
+                        if key1 in player:
                             if request(player[key1]):
                                 events = events + " (" + player[key1] + ")"
             if age:
@@ -1241,16 +1241,16 @@ class Registration(object):
                 out.write("%3d: %-32s %s: %s\n" % (n,name,sex[0],events))
             if len(events) > 0:
                 s = player['tshirt']
-                if tshirt.has_key(s):
+                if s in tshirt:
                     tshirt[s] = tshirt[s] + 1
                 else:
                     tshirt[s] = 1
         tsum = 0
-        print "T-shirt size count for all playing participants:"
-        for s in tshirt.keys():
+        print("T-shirt size count for all playing participants:")
+        for s in list(tshirt.keys()):
             tsum = tsum +tshirt[s] 
-            print "%-10s : %3d  %3d" % (s,tshirt[s],tsum)
-        print "------------------------------------------------"
+            print("%-10s : %3d  %3d" % (s,tshirt[s],tsum))
+        print("------------------------------------------------")
         if missing:
             if len(self.missing) > 0:
                 out.write("===Missing and/or mis-spelled players:\n");
@@ -1261,7 +1261,7 @@ class Registration(object):
                         count = count + 1
                         out.write("%3d: %s\n" % (count,i))
                     old = i
-                    print ""
+                    print("")
             else:
                 out.write("===Not checked for missing players yet:\n");
                 
@@ -1287,7 +1287,7 @@ class Registration(object):
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
                     key = event+'-'+cat
-                    if player.has_key(key):
+                    if key in player:
                         events = events + " " + key
                         k = k + 1
             for i in range(k,4):
@@ -1353,7 +1353,7 @@ class Registration(object):
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
                     key = event+'-'+cat
-                    if player.has_key(key):
+                    if key in player:
                         events = events + " " + key
                         k = k + 1
             for i in range(k,3):
@@ -1430,8 +1430,8 @@ class Registration(object):
             n = n + 1
             city='???'
             usab='?'
-            if player.has_key('city'): city = player['city']
-            if player.has_key('usab'): usab = player['usab']
+            if 'city' in player: city = player['city']
+            if 'usab' in player: usab = player['usab']
             name = "%-15s, %-15s " % (player['lname'],player['fname'])
             place = "%-20s %2s" % (city,player['state'])
             uname = player['fname'] + ' ' + player['lname']
@@ -1460,8 +1460,8 @@ class Registration(object):
         for player in self.players:
             n = n + 1
             city='???'
-            if player.has_key('city'): city = player['city']
-            if player.has_key('usab'): 
+            if 'city' in player: city = player['city']
+            if 'usab' in player: 
                 usab = player['usab']
                 u_info = u.findbyusab(int(usab))
                 if len(u_info) > 0:
@@ -1510,11 +1510,11 @@ class Registration(object):
                 for line in player['entry']:
                     f0.write("%s\n" % line)
                 f0.close()
-                print "%d: %s" % (my_id,email)
+                print("%d: %s" % (my_id,email))
                 subject1 = "%s %s %s" % (subject,player['fname'],player['lname'])
-                print "%s" % subject1
+                print("%s" % subject1)
                 cmd = "mail -s \"%s\" %s < email.tmp" % (subject1,email)
-                print "CMD: ",cmd
+                print("CMD: ",cmd)
                 time.sleep(0.2)
                 #os.system('ls -l email.tmp')
                 os.system(cmd)
@@ -1526,7 +1526,7 @@ class Registration(object):
         if out!=sys.stdout:
             out=open(out,"w")
         for player in self.players:
-            if player.has_key('email'):
+            if 'email' in player:
                 email = player['email']
                 if len(email) > 0:
                     name = "%s %s" % (player['fname'],player['lname'])
@@ -1596,7 +1596,7 @@ class Registration(object):
             for cat in self.cat:
                 for event in ['ms','ws','md','wd','xd']:
                     key = event+'-'+cat
-                    if player.has_key(key):
+                    if key in player:
                         k = k + 1
                         if key[1]=='d':
                             if key[0]=='x':
@@ -1843,25 +1843,25 @@ class Registration(object):
         it also re-counts if a player has events, e.g. is not
         on waiting list (when a 'w' is after the category)
         """
-        print "=== LISTALL: "
+        print("=== LISTALL: ")
         self.missing=[]
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
                 key = event+'-'+cat
-                print "Event:: %s" % key
+                print("Event:: %s" % key)
                 self.list(key,debug,csv)
-        print "=== Missing entries from: "
+        print("=== Missing entries from: ")
         self.missing.sort()
         old = ""
         count = 0
         for i in self.missing:
             if i != old:
                 count = count + 1
-                print "%3d: %s" % (count,i)
+                print("%3d: %s" % (count,i))
             old = i
-        print ""
+        print("")
         np = len(self.players)
-        print "Expecting a total of %d + %d = %d players" % (np,count,np+count)
+        print("Expecting a total of %d + %d = %d players" % (np,count,np+count))
             
 
     def list(self,key,debug=False, TPout=False):
@@ -1879,28 +1879,28 @@ class Registration(object):
         """loop over all events in the tournament with waitlisting
         to do just one, use list(event)
         """
-        print "=== WLISTALL: "
+        print("=== WLISTALL: ")
         self.missing=[]
         for cat in self.cat:
             for event in ['ms','ws','md','wd','xd']:
                 key = event+'-'+cat
-                print "Event:: %s" % key
+                print("Event:: %s" % key)
                 self.wlist(key,debug)
                 key = event+'-'+cat+'w'
-                print "Event:: %s" % key
+                print("Event:: %s" % key)
                 self.wlist(key,debug)
-        print "=== Missing entries from: "
+        print("=== Missing entries from: ")
         self.missing.sort()
         old = ""
         count = 0
         for i in self.missing:
             if i != old:
                 count = count + 1
-                print "%3d: %s" % (count,i)
+                print("%3d: %s" % (count,i))
             old = i
-        print ""
+        print("")
         np = len(self.players)
-        print "Expecting a total of %d + %d = %d players" % (np,count,np+count)
+        print("Expecting a total of %d + %d = %d players" % (np,count,np+count))
             
 
     def wlist(self,key,debug=False):
@@ -1949,15 +1949,15 @@ class Registration(object):
         if TPout:    # write a header for the CSV file
             ev.write(self.TP0())
         for player in self.players:
-            if player.has_key(key):
+            if key in player:
                 n = n+1
-                print "%3d: %s %s (%s) # %d" % (n,player['fname'],player['lname'],player['state'],player['id'])
+                print("%3d: %s %s (%s) # %d" % (n,player['fname'],player['lname'],player['state'],player['id']))
                 if TPout:
                     ev.write("%s\n" % self.TP1(player))
                 else:
                     ev.write("%s %s (%s)\n" % (player['fname'],player['lname'],player['state']))
                 sex = player['sex'][0]
-                if self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname'])
+                if self.bad_sex(sex,need_sex): print("###: Warning, %s is wrong sex (should be %s) for %s %s?" % (sex,need_sex,player['fname'],player['lname']))
         e=key[0:2]
         c=key[3:]
         self.sum[c][e]  = n
@@ -1978,14 +1978,14 @@ class Registration(object):
         TPout=True
         ev = Eopen(key,TPout)
         for player in self.players:
-            if player.has_key(key):
+            if key in player:
                 sout = "%s %s (%s) # %d" % (player['fname'],player['lname'],player['state'],player['id'])
                 lout.append((sout,player['id']))
         lout.sort(sortwsingles)
         n = 0
         for l in lout:
             n = n + 1
-            print "%3d: %s" % (n,l[0])
+            print("%3d: %s" % (n,l[0]))
             ev.write("%s\n" % l[0])
         ev.close()
 
@@ -2024,9 +2024,9 @@ class Registration(object):
             ev.write(self.TP0())
         # loop over all players, and see if they play in "key"
         for player in self.players:
-            if player.has_key(key):
+            if key in player:
                 sex = player['sex'][0]
-                if not mixed and self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex)
+                if not mixed and self.bad_sex(sex,need_sex): print("###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex))
                 if player[0] == 0:
                     n = n+1
                     show = 1
@@ -2034,19 +2034,19 @@ class Registration(object):
                     show = 0
                 player[0] = 1                
                 partner = '???'
-                if player.has_key(key2): partner = player[key2]
+                if key2 in player: partner = player[key2]
                 if debug:
                     if show:
-                        print "%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner)
+                        print("%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner))
                     else:
-                        print  "  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner)
+                        print("  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner))
                 p1 = self.player1(partner)
                 if len(p1):
                     # partner found
                     p1[0] = 1
                     partner2 = '???'
-                    if p1.has_key(key2): partner2 = p1[key2]
-                    if debug: print "  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state'])
+                    if key2 in p1: partner2 = p1[key2]
+                    if debug: print("  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state']))
                     if show:
                         n2 = n2 + 1
                         s1 = player['state']
@@ -2066,7 +2066,7 @@ class Registration(object):
                             s = "%s %s / %s (%s) # %d/%d" % (player['fname'],player['lname'],partner,state,rank1,rank2)
                         else:
                             s = "%s / %s %s (%s) # %d/%d" % (partner,player['fname'],player['lname'],state,rank1,rank2)
-                        print "%2d:: %s" % (n,s)
+                        print("%2d:: %s" % (n,s))
                         if TPout:
                             if mixed and sex=='m':
                                 ev.write("%s\n" % self.TP1(player))
@@ -2077,17 +2077,17 @@ class Registration(object):
                         else:
                             ev.write("%s\n" % s)
                     if not debug and partner2 == '???':
-                        print "### Missing partner (usually entered in different event)"
+                        print("### Missing partner (usually entered in different event)")
                 else:
                     # partner not found
                     if debug:
-                        print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
+                        print("  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner))
                     if not request(partner):
                         self.missing.append(partner)
                         n2 = n2 + 1
                         if not debug:
                             s = "%s %s / %s (%s) ** not reg ** " % (player['fname'],player['lname'],partner,player['state'])
-                            print "%2d:: %s" % (n,s)
+                            print("%2d:: %s" % (n,s))
                             if TPout:
                                 ev.write("%s\n" % self.TP1(player))
                                 ev.write("%s\n" % self.TP1(0))
@@ -2107,10 +2107,10 @@ class Registration(object):
                         else:
                             ev.write("%-40s    **REQ**\n" % s)
         if len(m_needy_players)+len(f_needy_players) > 0:
-            print "== Partners Requested in %s by: =============" % key
+            print("== Partners Requested in %s by: =============" % key)
             for np in f_needy_players+m_needy_players:
-                print np
-            print "============================================="
+                print(np)
+            print("=============================================")
 
         e=key[0:2]
         c=key[3:]
@@ -2153,9 +2153,9 @@ class Registration(object):
         f_needy_players = []
         # loop over all players, and see if they play in "key"
         for player in self.players:
-            if player.has_key(key):
+            if key in player:
                 sex = player['sex'][0]
-                if not mixed and self.bad_sex(sex,need_sex): print "###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex)
+                if not mixed and self.bad_sex(sex,need_sex): print("###: Warning, %s is wrong sex (should be %s)?" % (sex,need_sex))
                 if player[0] == 0:
                     n = n+1
                     show = 1
@@ -2163,19 +2163,19 @@ class Registration(object):
                     show = 0
                 player[0] = 1                
                 partner = '???'
-                if player.has_key(key2): partner = player[key2]
+                if key2 in player: partner = player[key2]
                 if debug:
                     if show:
-                        print "%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner)
+                        print("%2d: %s %s (%s) %s" % (n,player['fname'],player['lname'],player['state'],partner))
                     else:
-                        print  "  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner)
+                        print("  : %s %s (%s) %s" % (player['fname'],player['lname'],player['state'],partner))
                 p1 = self.player1(partner)
                 if len(p1):
                     # partner found
                     p1[0] = 1
                     partner2 = '???'
-                    if p1.has_key(key2): partner2 = p1[key2]
-                    if debug: print "  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state'])
+                    if key2 in p1: partner2 = p1[key2]
+                    if debug: print("  : %s      %s %s (%s)" % (partner2,p1['fname'],p1['lname'],p1['state']))
                     if show:
                         n2 = n2 + 1
                         s1 = player['state']
@@ -2197,11 +2197,11 @@ class Registration(object):
                             s = "%s / %s %s (%s) # %d/%d" % (partner,player['fname'],player['lname'],state,rank1,rank2)
                         lout.append((s,rank1,rank2))
                     if not debug and partner2 == '???':
-                        print "### Missing partner (usually entered in different event)"
+                        print("### Missing partner (usually entered in different event)")
                 else:
                     # partner not found
                     if debug:
-                        print "  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner)
+                        print("  : %s %s / %s - no partner found!" % (player['fname'],player['lname'],partner))
                     if not request(partner):
                         self.missing.append(partner)
                         n2 = n2 + 1
@@ -2221,12 +2221,12 @@ class Registration(object):
         n = 0
         for l in lout:
             n = n + 1
-            print "%3d: %s" % (n,l[0])
+            print("%3d: %s" % (n,l[0]))
         if len(m_needy_players)+len(f_needy_players) > 0:
-            print "== Partners Requested in %s by: =============" % key
+            print("== Partners Requested in %s by: =============" % key)
             for np in f_needy_players+m_needy_players:
-                print np
-            print "============================================="
+                print(np)
+            print("=============================================")
 
     def player2(self,fname,lname):
         for player in self.players:
@@ -2257,12 +2257,12 @@ class Registration(object):
                 if player['fname']==fname and player['lname']==lname:
                     return player
         if len(names) == 4:
-            print "### Name with 4 words???: " % names
+            print("### Name with 4 words???: " % names)
         # having arrived here, no exact match was found, should try partial
         return {}
     def dump_all(self):
         for player in self.players:
-            print player
+            print(player)
 
 
 
