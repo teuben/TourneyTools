@@ -1,0 +1,28 @@
+#! /usr/bin/env python
+#
+import sys
+import csv
+import openpyxl
+
+if len(sys.argv) == 1:
+    print("Usage: %s csv-file" % sys.argv[0])
+    print("Converts CSV to XLSX file")
+    sys.exit(0)
+
+f1 = sys.argv[1]
+f2 = f1 + '.xlsx'
+
+# deprecated
+#    import pandas as pd
+#    read_file = pd.read_csv(f1)
+#    read_file.to_excel(f1 + '.xls', index = None, header=True)
+
+    
+wb = openpyxl.Workbook()
+ws = wb.active
+with open(f1) as f:
+    reader = csv.reader(f)
+    for row in reader:
+        ws.append(row)
+wb.save(f2)
+print("Wrote %s" % f2)
