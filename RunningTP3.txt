@@ -1,0 +1,15 @@
+version:  March 2023
+
+Some notes on Using BTP for triple elimination
+===============================================
+
+BTP now supports our triple elimination format through
+the Triple Slate format, though they give them plate based names:
+
+    A = Main draw (N players -> N-1 matches)
+    B = Special Plate (N/4 players -> (N/4)-1 matches)  - but they make an N/2 draws
+    C = Plate (N/2 players -> (N/2)-1 matches)
+    D = Consolation Plate (N/4 players -> (N/4)-1 matches)
+
+
+You make an Elimination round, and then select Triple Slate.
