@@ -1,3 +1,9 @@
+# TourneyTools
+
+
+
+
+# 
 
 Information on the older V1 of PTT (Peter's TourneyTools) is on:  
 	http://www.astro.umd.edu/~teuben/badminton/tourney/
@@ -11,7 +17,7 @@ Requirement for the new one are:
 
 In the examples below, i will assume you have ipython, since this
 makes sessions managment, history recall, reloading code and data
-a lOT easier.
+a lOT easier. I suppose a jupyter notebook will also work well.
 
 
 
