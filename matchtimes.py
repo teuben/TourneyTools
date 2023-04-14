@@ -17,7 +17,7 @@ mt2 = 40
 
 def round_robin(n, mt=30):
     """amount of time needed for RR of N players, MT in minutes"""
-    return ((n*(n-1))/2)*mt
+    return ((n*(n-1))//2)*mt
 
 def single_elimination(n):
     """amount of time needed for N players to finish a single elimination"""
@@ -36,12 +36,13 @@ def single_elimination(n):
 def double_elimination(n):
     """amount of time needed for N players to finish a single elimination"""
     if n<0: return round_robin(-n)
-    return single_elimination(n) + single_elimination(n/2)
-    
-def round_robin(n, mt=30):
-    """amount of time needed for RR of N players, MT in minutes"""
-    return ((n*(n-1))/2)*30
-    
+    return single_elimination(n) + single_elimination(n//2)
+
+def triple_elimination(n):
+    if n<0: return round_robin(-n)
+    if True:
+        return single_elimination(n) + 2*single_elimination(n//2) + single_elimination(n//4)
+    return 2*n-4
 
 def dcopen2009(t0=30,t1=35,t2=40):
     """match times for 2009"""
@@ -85,6 +86,54 @@ def dcopen2009(t0=30,t1=35,t2=40):
     print("Total about right:          ",sum)
     
 
-def pjt():
+def dcopen2023(t0=30,t1=35,t2=40):
+    """match times for 2009"""
+    global mt0,mt1,mt2
+    mt0 = t0
+    mt1 = t1
+    mt2 = t2
+    #
+    hours = [23-9, 21-9]
+    court = 8
+    #
+    total = 0
+    print("Hours:      ",hours)
+    print("Match times:",mt0,mt1,mt2)
+    for h in hours:
+        total = total + h
+    cm = total*court*60
+    print("Total %2d hours on %2d courts: %d court minutes" % (total,court,cm))
+
+    #
+    a = [64, 32, 64, 32, 64]
+    c = []
+    s = []
+    sum = 0
+    for cat in a+c+s:
+        sum = sum + triple_elimination(cat)
+    print("Total power of 2:           ",sum)
+    a = [64, 24, 53, 24, 53]
+    c = []
+    s = []
+    sum = 0
+    for cat in a+c+s:
+        sum = sum + triple_elimination(cat)
+    print("Total too much:             ",sum)
+    a = [33, 10, 35, 11, 25]
+    c = []
+    s = []
+    sum = 0
+    for cat in a+c+s:
+        sum = sum + triple_elimination(cat)
+    print("Total about right:          ",sum)
+    
+
+def pjt2009():
     dcopen2009(30,35,40)
     dcopen2009(1,1,1)
+
+def pjt2023():    
+    dcopen2023(30,35,40)
+    dcopen2023(1,1,1)
+
+pjt2023()
