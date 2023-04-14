@@ -1,0 +1,133 @@
+
+# Database
+
+
+BTP uses an MDB database,produced by the Microsoft 'Jet' database engine. There are some open source
+tools such as https://mdbtools.github.io/faq/
+
+
+     mdb-tables 	list tables in the specified file
+     mdb-schema 	generate schema DDL for the specified file
+     mdb-export 	generate CSV style output for a table
+     mdb-ver 		display the version of the specified file
+     mdb-header 	support for using MDB data in C
+     mdb-parsecsv 	support for using MDB data in C
+     mdb-sql 		command line SQL query tool
+
+##
+import  pyodbc
+
+conn_str = 'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=Demo.tp;'
+conn_str = 'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=Demo.mdb;'
+conn_str = 'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=Demo.accdb;'
+
+conn = pyodbc.connect(conn_str)
+
+
+conn_str = 'DRIVER={Microsoft Access Driver (*.mdb, *.accdb)};DBQ=/home/teuben/Badminton/TourneyTools/Demo.tp;'
+conn = pyodbc.connect(conn_str)
+Error: ('01000', "[01000] [unixODBC][Driver Manager]Can't open lib 'Microsoft Access Driver (*.mdb, *.accdb)' : file not found (0) (SQLDriverConnect)")
+
+
+cnxn = pyodbc.connect('DRIVER={CData ODBC Driver for Access};DataSource=Demo.mdb;')
+Error: ('01000', "[01000] [unixODBC][Driver Manager]Can't open lib 'CData ODBC Driver for Access' : file not found (0) (SQLDriverConnect)")
+
+
+import pandas_access as mdb
+db_filename = 'Demo.tp'
+for tbl in mdb.list_tables(db_filename):
+  print(tbl)
+
+# Read a small table.
+df = mdb.read_table(db_filename, "MyTable")
+
+https://datatofish.com/how-to-connect-python-to-ms-access-database-using-pyodbc/
+
+https://www.cdata.com/kb/tech/access-odbc-python-linux.rst
+sudo apt-get install unixodbc unixodbc-dev
+
+
+## tables
+
+Availability
+Club
+CodeViolation
+Country
+CourtType
+District
+=Draw
+drawformat
+=Entry
+Entryformitem
+=Event
+eventpart
+eventprizemoney
+eventschedule
+eventscheduleitem
+files
+fixture
+fixtureitem
+fixturetemplate
+fixturetemplateitem
+Income
+Link
+Location
+Log
+mailtemplate
+MatchOfficial
+Message
+MessageMatch
+Notes
+Official
+OfficialFunction
+onlineentry
+OrderOfPlay
+OrderOfPlayCourt
+ParaClass
+Payment
+=Player
+Playerentryformitem
+PlayerLevel
+PlayerlevelEntry
+playerprizemoney
+PlayerRatingEntry
+playerutr
+playerwtn
+PrintSettings
+RankingEntry
+RatingSection
+Replacement
+ScoringFormat
+seedingrule
+seedingruleitem
+Settings
+SettingsMemo
+stage
+stageentry
+TournamentDay
+TournamentInformation
+tournamentschedule
+Withdrawal
+=Court
+drawformatitem
+eventscheduleblock
+League
+MatchWarning
+OrderOfPlayItem
+PlayerMatch
+RankingCategory
+SettingsFloat
+TournamentTime
+
+
+## Import a player list
+
+ - known column names
+Member ID
+Name
+Firstname
+
+
+2. convert csv to xlsx using csv2xlsx (python)
+
+
